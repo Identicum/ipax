@@ -1,6 +1,17 @@
 # IPAx
 Identity-aware proxy based on NGINX, OpenResty and [lua-resty-openidc](https://github.com/zmartzone/lua-resty-openidc).
 
+## IDP
+Create an OpenID Connect Client in your IDP using the following information:
+- Client Name: IPAx
+- Scopes: profile, openid
+- Grant Types: authorization_code
+- Redirect URIs: Include values like: "https://myapp.identicum.com/redirect_uri" (suffix is handled by `lua-resty-openidc`, can be adjusted using the `OIDC_REDIRECT_URI` environment variable)
+
+## Configuration files
+Samples are provided in the [conf.samples](./conf.samples/) folder.
+Customize your files and put them into your local `./conf.d/` directory.
+
 ## Certificates
 Issue as many certificates as necessary to be used in your reverse proxy.
 IPAx supports [wildcard certificates](https://en.wikipedia.org/wiki/Wildcard_certificate) and [SNI](https://en.wikipedia.org/wiki/Server_Name_Indication).
@@ -20,15 +31,6 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout wildcard_identicum_c
     Email Address []: `no-reply@identicum.com`
 
 Put the generated certificate files into your local `./certs/` directory.
-
-## IDP
-Create an OpenID Connect Client in your IDP using the following information:
-- Client Name: IPAx
-- Scopes: profile, openid
-- Grant Types: authorization_code
-
-## Local configuration
-Samples are provided in the [conf.samples](./conf.samples/) folder.
 
 ## Run the container
 
