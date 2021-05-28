@@ -40,6 +40,7 @@ end
 
 function _M.check_multivalued_user_claim(claim_values, check_item)
 	for index, value in pairs(claim_values) do
+		-- ToDo: compare case-insensitive
 		if value == check_item then
 			return true
 		end
