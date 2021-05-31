@@ -7,7 +7,8 @@ local global_oidc_opts = {
 	client_secret = os.getenv("OIDC_CLIENT_SECRET"),
 	scope = os.getenv("OIDC_SCOPE"),
 	redirect_uri = os.getenv("OIDC_REDIRECT_URI"),
-	session_contents = {user=true, id_token=false}
+	renew_access_token_on_expiry = true,
+	session_contents = {id_token=false, access_token=true, user=true}
 }
 
 local function split(input, separator)
@@ -33,9 +34,25 @@ end
 
 
 function _M.get_user()
-	local res, err = require("resty.openidc").authenticate(global_oidc_opts)
-	local authentication_feedback = check_authentication(err)
+	local res = _M.get_res()
 	return res.user
+end
+
+function _M.get_id_token()
+	local res = _M.get_res()
+	return res.id_token
+end
+
+function _M.get_access_token()
+	local res = _M.get_res()
+	return res.access_token
+end
+
+function _M.get_res()
+	local res, err, target, session = require("resty.openidc").authenticate(global_oidc_opts)
+	session:close()
+	local authentication_feedback = check_authentication(err)
+	return res
 end
 
 function _M.check_multivalued_user_claim(claim_values, check_item)
@@ -50,6 +67,9 @@ function _M.check_multivalued_user_claim(claim_values, check_item)
 end
 
 function _M.get_group_names(claim_values, separator)
+	if claim_values == nil then
+		return ""
+	end
 	if separator == nil then
 		separator = "|"
 	end
