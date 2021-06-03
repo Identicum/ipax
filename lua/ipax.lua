@@ -72,6 +72,7 @@ end
 
 function _M.get_group_names(claim_values, separator)
 	if claim_values == nil then
+		ngx.log(ngx.DEBUG, 'claim_values is null.')
 		return ""
 	end
 	if separator == nil then
