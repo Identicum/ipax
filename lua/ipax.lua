@@ -7,6 +7,7 @@ local global_oidc_opts = {
 	client_secret = os.getenv("OIDC_CLIENT_SECRET"),
 	scope = os.getenv("OIDC_SCOPE"),
 	redirect_uri = os.getenv("OIDC_REDIRECT_URI"),
+	secret = os.getenv("OIDC_SESSION_SECRET"),
 	renew_access_token_on_expiry = true,
 	session_contents = {id_token=false, access_token=true, user=true}
 }

@@ -45,6 +45,7 @@ docker run  -d \
     -e OIDC_CLIENT_SECRET="my_client_secret" \
     -e OIDC_SCOPES="openid profile" \
     -e OIDC_REDIRECT_URI="/redirect_uri" \
+    -e OIDC_SESSION_SECRET="some_uuid_secret" \
     -v $(pwd)/conf.d/:/etc/ipax/conf.d/:ro \
     -v $(pwd)/certs/:/etc/ipax/certs/:ro \
     identicum/ipax:latest
