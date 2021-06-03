@@ -43,7 +43,7 @@ docker run  -d \
     -e OIDC_DISCOVERY="https://idp.identicum.com/.well-known/openid-configuration" \
     -e OIDC_CLIENT_ID="my_client_id" \
     -e OIDC_CLIENT_SECRET="my_client_secret" \
-    -e OIDC_SCOPES="openid profile" \
+    -e OIDC_SCOPE="openid profile" \
     -e OIDC_REDIRECT_URI="/redirect_uri" \
     -e OIDC_SESSION_SECRET="some_uuid_secret" \
     -v $(pwd)/conf.d/:/etc/ipax/conf.d/:ro \
