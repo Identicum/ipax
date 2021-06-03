@@ -1,4 +1,11 @@
-error_log  logs/error.log  info;
+env OIDC_DISCOVERY;
+env OIDC_CLIENT_ID;
+env OIDC_CLIENT_SECRET;
+env OIDC_SCOPE;
+env OIDC_REDIRECT_URI;
+env OIDC_SESSION_SECRET;
+
+error_log stderr $NGINX_LOG_LEVEL;
 
 events {
 	worker_connections 128;
@@ -17,9 +24,3 @@ http {
 
 	include /etc/ipax/conf.d/*.conf;
 }
-
-env OIDC_DISCOVERY;
-env OIDC_CLIENT_ID;
-env OIDC_CLIENT_SECRET;
-env OIDC_SCOPE;
-env OIDC_REDIRECT_URI;
