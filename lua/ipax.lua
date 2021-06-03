@@ -1,15 +1,18 @@
 local _M = {}
 
-local global_oidc_opts = {
+local oidc_opts = {
 	discovery = os.getenv("OIDC_DISCOVERY"),
 	ssl_verify = "no",
 	client_id = os.getenv("OIDC_CLIENT_ID"),
 	client_secret = os.getenv("OIDC_CLIENT_SECRET"),
 	scope = os.getenv("OIDC_SCOPE"),
 	redirect_uri = os.getenv("OIDC_REDIRECT_URI"),
-	secret = os.getenv("OIDC_SESSION_SECRET"),
 	renew_access_token_on_expiry = true,
 	session_contents = {id_token=false, access_token=true, user=true}
+}
+
+local session_opts = {
+	secret = os.getenv("OIDC_SESSION_SECRET")
 }
 
 local function split(input, separator)
@@ -50,7 +53,7 @@ function _M.get_access_token()
 end
 
 function _M.get_res()
-	local res, err, target, session = require("resty.openidc").authenticate(global_oidc_opts)
+	local res, err, target, session = require("resty.openidc").authenticate(oidc_opts, null, action, session_opts)
 	session:close()
 	local authentication_feedback = check_authentication(err)
 	return res
