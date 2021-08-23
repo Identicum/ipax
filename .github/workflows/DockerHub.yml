@@ -3,7 +3,7 @@ on:
     branches:
     - main
 env:
-  CONTAINER_IMAGE: ${{github.event.repository.name}}:latest
+  CONTAINER_IMAGE: identicum/${{github.event.repository.name}}:latest
 jobs:
   build-push:
     runs-on: ubuntu-latest
