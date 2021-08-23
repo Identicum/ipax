@@ -2,7 +2,7 @@ on:
   push:
     branches:
     - main
-end:
+env:
   CONTAINER_IMAGE: ${{github.event.repository.name}}:latest
 jobs:
   build-push:
