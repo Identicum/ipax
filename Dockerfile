@@ -10,8 +10,8 @@ ENV NGINX_LOG_LEVEL=warn \
     OIDC_DISCOVERY="" \
     OIDC_CLIENT_ID="" \
     OIDC_CLIENT_SECRET="" \
-    OIDC_SCOPE="" \
-    OIDC_REDIRECT_URI="" \
+    OIDC_SCOPE="openid profile" \
+    OIDC_REDIRECT_URI="/redirect_uri" \
     OIDC_SESSION_SECRET=""
 
 WORKDIR /usr/local/openresty/nginx
