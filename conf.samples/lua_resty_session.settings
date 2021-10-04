@@ -1,3 +1,0 @@
-set $session_cookie_persistent on;
-set $session_cookie_lifetime 86400;
-large_client_header_buffers 4 16k;

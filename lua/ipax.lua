@@ -12,7 +12,11 @@ local oidc_opts = {
 }
 
 local session_opts = {
-	secret = os.getenv("OIDC_SESSION_SECRET")
+	secret = os.getenv("SESSION_SECRET"),
+	cookie = {
+		persistent = os.getenv("SESSION_COOKIE_PERSISTENT"),
+		lifetime   = os.getenv("SESSION_COOKIE_LIFETIME")
+	}
 }
 
 local function split(input, separator)
