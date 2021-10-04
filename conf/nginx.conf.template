@@ -17,6 +17,9 @@ http {
 	access_log  logs/access.log;
 	resolver $NGINX_RESOLVER;
 
+	include mime.types;
+	default_type application/octet-stream;
+
 	include lua.conf;
 	include server.conf;
 
