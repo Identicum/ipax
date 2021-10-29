@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  idp:
+    image: jboss/keycloak:15.0.2
+    restart: always
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    volumes:
+      - ./keycloak/startup-scripts/:/opt/jboss/startup-scripts/
+      - ./keycloak/custom-scripts/:/opt/jboss/custom-scripts/
+    ports:
+      - 8080:8080
+  ipax:
+    image: identicum/ipax:latest
+    restart: always
+    volumes:
+      - ./conf/server.conf:/usr/local/openresty/nginx/conf/server.conf
+      - ./conf/info.conf:/usr/local/openresty/nginx/conf/info.conf
+    environment:
+      NGINX_RESOLVER: 127.0.0.11 valid=5s
+      NGINX_LOG_LEVEL: debug
+      OIDC_DISCOVERY: http://idp:8080/auth/realms/demorealm/.well-known/openid-configuration
+      OIDC_CLIENT_ID: ipax_client_id
+      OIDC_CLIENT_SECRET: ipax_client_secret
+    ports:
+      - 80:80
+
