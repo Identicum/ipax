@@ -40,7 +40,6 @@ local function check_authentication(err)
 	return true
 end
 
-
 function _M.get_user()
 	local res = _M.get_res()
 	return res.user
