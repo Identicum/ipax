@@ -18,6 +18,8 @@ services:
     volumes:
       - ./conf/server.conf:/usr/local/openresty/nginx/conf/server.conf
       - ./conf/info.conf:/usr/local/openresty/nginx/conf/info.conf
+      - ./lua/ipax.lua:/etc/ipax/lua/ipax.lua
+      - ./lua/json.lua:/etc/ipax/lua/json.lua
     environment:
       NGINX_RESOLVER: 127.0.0.11 valid=5s
       NGINX_LOG_LEVEL: debug
