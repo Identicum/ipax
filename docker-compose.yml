@@ -16,16 +16,19 @@ services:
     image: identicum/ipax:latest
     restart: always
     volumes:
-      - ./conf/server.conf:/usr/local/openresty/nginx/conf/server.conf
       - ./conf/info.conf:/usr/local/openresty/nginx/conf/info.conf
-      - ./lua/ipax.lua:/etc/ipax/lua/ipax.lua
-      - ./lua/json.lua:/etc/ipax/lua/json.lua
+      - ./conf/lua.conf:/usr/local/openresty/nginx/conf/lua.conf
+      - ./conf/nginx.conf.template:/usr/local/openresty/nginx/conf/nginx.conf.template
+      - ./conf/server.conf:/usr/local/openresty/nginx/conf/server.conf
+      - ./html/:/var/ipax/html/
+      - ./lua/:/etc/ipax/lua/
     environment:
       NGINX_RESOLVER: 127.0.0.11 valid=5s
       NGINX_LOG_LEVEL: debug
       OIDC_DISCOVERY: http://idp:8080/auth/realms/demorealm/.well-known/openid-configuration
       OIDC_CLIENT_ID: ipax_client_id
       OIDC_CLIENT_SECRET: ipax_client_secret
+      OIDC_POST_LOGOUT_REDIRECT_URI: http://localhost/logoutSuccess
     ports:
       - 80:80
 

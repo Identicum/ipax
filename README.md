@@ -12,9 +12,29 @@ Create an OpenID Connect Client in your IDP using the following information:
 Samples are provided in the [conf.samples](./conf.samples/) folder.
 Customize your files and put them into your local `./conf.d/` directory.
 
-## Certificates
+## Run the container
+
+Run the image, mounting a local directory for configuration:
+
+```sh
+docker run  -d \
+    -p 80:80 \
+    -e OIDC_DISCOVERY="https://idp.identicum.com/.well-known/openid-configuration" \
+    -e OIDC_CLIENT_ID="my_client_id" \
+    -e OIDC_CLIENT_SECRET="my_client_secret" \
+    -e OIDC_SCOPE="openid profile" \
+    -e OIDC_REDIRECT_URI="/redirect_uri" \
+    -e OIDC_SESSION_SECRET="some_uuid_secret" \
+    -e OIDC_POST_LOGOUT_REDIRECT_URI="https://myapp.identicum.com/logoutSuccess" \
+    -v $(pwd)/conf.d/:/etc/ipax/conf.d/:ro \
+    identicum/ipax:latest
+```
+
+## Certificates (optional)
 Issue as many certificates as necessary to be used in your reverse proxy.
 IPAx supports [wildcard certificates](https://en.wikipedia.org/wiki/Wildcard_certificate) and [SNI](https://en.wikipedia.org/wiki/Server_Name_Indication).
+
+If you want to use HTTPS, add mapping for port 443 and mount volume `./certs/` as /etc/ipax/certs/
 
 ### Self-signed certificate
 To test using a self-signed certificate, run the following command (replace with your domain):
@@ -31,22 +51,3 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout wildcard_identicum_c
     Email Address []: `no-reply@identicum.com`
 
 Put the generated certificate files into your local `./certs/` directory.
-
-## Run the container
-
-Run the image, mounting local directories for configuration and certificates:
-
-```sh
-docker run  -d \
-    -p 80:80 \
-    -p 443:443 \
-    -e OIDC_DISCOVERY="https://idp.identicum.com/.well-known/openid-configuration" \
-    -e OIDC_CLIENT_ID="my_client_id" \
-    -e OIDC_CLIENT_SECRET="my_client_secret" \
-    -e OIDC_SCOPE="openid profile" \
-    -e OIDC_REDIRECT_URI="/redirect_uri" \
-    -e OIDC_SESSION_SECRET="some_uuid_secret" \
-    -v $(pwd)/conf.d/:/etc/ipax/conf.d/:ro \
-    -v $(pwd)/certs/:/etc/ipax/certs/:ro \
-    identicum/ipax:latest
-```
