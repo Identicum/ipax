@@ -2,6 +2,7 @@ version: '3'
 
 services:
   idp:
+    container_name: idp
     image: jboss/keycloak:15.0.2
     restart: always
     environment:
@@ -13,6 +14,7 @@ services:
     ports:
       - 8080:8080
   ipax:
+    container_name: ipax
     image: identicum/ipax:latest
     restart: always
     volumes:
