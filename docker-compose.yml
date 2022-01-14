@@ -30,6 +30,7 @@ services:
       OIDC_DISCOVERY: http://idp:8080/auth/realms/demorealm/.well-known/openid-configuration
       OIDC_CLIENT_ID: ipax_client_id
       OIDC_CLIENT_SECRET: ipax_client_secret
+      OIDC_SCOPE: openid profile email roles phone
       OIDC_POST_LOGOUT_REDIRECT_URI: http://localhost/logoutSuccess
     ports:
       - 80:80
