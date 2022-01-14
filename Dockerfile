@@ -1,4 +1,4 @@
-FROM openresty/openresty:1.19.9.1-centos7
+FROM openresty/openresty:1.19.9.1-5-centos-rpm
 
 RUN opm install zmartzone/lua-resty-openidc
 
