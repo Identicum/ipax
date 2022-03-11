@@ -4,7 +4,7 @@ RUN opm install zmartzone/lua-resty-openidc
 
 COPY conf/ /usr/local/openresty/nginx/conf/
 COPY lua/ /etc/ipax/lua/
-COPY html/ /var/ipax/html/
+COPY html /var/ipax/html
 
 ENV NGINX_LOG_LEVEL=warn \
     NGINX_RESOLVER=8.8.8.8 \
