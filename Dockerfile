@@ -8,7 +8,7 @@ COPY html/ /var/ipax/html/
 
 ENV NGINX_LOG_LEVEL=warn \
     NGINX_RESOLVER=8.8.8.8 \
-    SESSION_SECRET="" \
+    SESSION_SECRET="ipax_default_secret" \
     SESSION_COOKIE_PERSISTENT=off \
     SESSION_COOKIE_LIFETIME=86400 \
     OIDC_DISCOVERY="" \
