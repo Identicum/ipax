@@ -30,6 +30,8 @@ docker run  -d \
     identicum/ipax:latest
 ```
 
+> To use PKCE, remove `OIDC_CLIENT_SECRET` and add `OIDC_USE_PKCE` with value "true"
+
 ## Certificates (optional)
 Issue as many certificates as necessary to be used in your reverse proxy.
 IPAx supports [wildcard certificates](https://en.wikipedia.org/wiki/Wildcard_certificate) and [SNI](https://en.wikipedia.org/wiki/Server_Name_Indication).
