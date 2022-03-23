@@ -29,6 +29,7 @@ services:
       NGINX_LOG_LEVEL: debug
       OIDC_DISCOVERY: http://idp:8080/auth/realms/demorealm/.well-known/openid-configuration
       OIDC_CLIENT_ID: ipax_client_id
+      OIDC_USE_PKCE: false
       OIDC_CLIENT_SECRET: ipax_client_secret
       OIDC_SCOPE: openid profile email roles phone
       OIDC_POST_LOGOUT_REDIRECT_URI: http://localhost/logoutSuccess

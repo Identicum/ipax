@@ -13,6 +13,7 @@ ENV NGINX_LOG_LEVEL=warn \
     SESSION_COOKIE_LIFETIME=86400 \
     OIDC_DISCOVERY="" \
     OIDC_CLIENT_ID="" \
+    OIDC_USE_PKCE=false \
     OIDC_CLIENT_SECRET="" \
     OIDC_SCOPE="openid profile" \
     OIDC_REDIRECT_URI="/redirect_uri" \
