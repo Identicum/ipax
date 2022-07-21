@@ -1,0 +1,8 @@
+{
+	"email": "demo@mail.com",
+	"enabled": true,
+	"username": "demo",
+	"firstName": "Demo",
+	"lastName": "User",
+	"credentials": [{ "type": "password", "value": "demo" }]
+}

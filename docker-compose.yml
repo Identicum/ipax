@@ -11,6 +11,7 @@ services:
     volumes:
       - ./keycloak/startup-scripts/:/opt/jboss/startup-scripts/
       - ./keycloak/custom-scripts/:/opt/jboss/custom-scripts/
+      - ./keycloak/objects/:/opt/jboss/keycloak/objects/
     ports:
       - 8080:8080
   ipax:

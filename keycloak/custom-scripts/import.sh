@@ -2,26 +2,25 @@
 
 KCADM=$JBOSS_HOME/bin/kcadm.sh
 REALM_NAME=demorealm
-CLIENT_ID=ipax_client_id
-CLIENT_SECRET=ipax_client_secret
-USER_NAME=demo
-USER_PASS=demo
-USER_MAIL=demo@mail.com
-USER_FIRST_NAME=User
-USER_LAST_NAME=Demo
 
 for i in {1..10}; do
     $KCADM config credentials --server http://localhost:8080/auth --realm master --user $KEYCLOAK_USER --password $KEYCLOAK_PASSWORD
     custom_realm=$($KCADM get realms/$REALM_NAME)
     if [ -z "$custom_realm" ]; then
-        $KCADM create realms -s realm="${REALM_NAME}" -s enabled=true -s registrationAllowed=true
+        echo "Importing custom realm."
+        $KCADM create realms -f /opt/jboss/keycloak/objects/realm.json
 
-        $KCADM create clients -r $REALM_NAME -s clientId=$CLIENT_ID -s secret=$CLIENT_SECRET -s 'redirectUris=["http://localhost/redirect_uri","http://localhost/logoutSuccess"]'
+        echo "Importing clients."
+        for f in /opt/jboss/keycloak/objects/clients/*.json; do
+            $KCADM create clients -r $REALM_NAME -f $f
+        done
 
-        $KCADM create users -r $REALM_NAME -s username=$USER_NAME -s enabled=true -s email=$USER_MAIL -s emailVerified=true -s firstName=$USER_FIRST_NAME -s lastName=$USER_LAST_NAME
-        $KCADM set-password -r $REALM_NAME --username $USER_NAME --new-password $USER_PASS
+        echo "Importing users."
+        for f in /opt/jboss/keycloak/objects/users/*.json; do
+            $KCADM create users -r $REALM_NAME -f $f
+        done
     else
-        echo "The custom realm already exists."
+        echo "Custom realm $REALM_NAME already exists."
         exit
     fi
     sleep 5s

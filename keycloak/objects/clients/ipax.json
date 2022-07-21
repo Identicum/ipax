@@ -1,0 +1,15 @@
+{
+	"name": "ipax",
+	"clientId": "ipax_client_id",
+	"secret": "ipax_client_secret",
+	"standardFlowEnabled": true,
+	"frontchannelLogout": true,
+	"rootUrl": "http://localhost",
+	"baseUrl": "http://localhost",
+	"redirectUris": [
+		"/redirect_uri",
+		"/logoutSuccess"
+	],
+	"defaultClientScopes": [ ],
+	"optionalClientScopes": [ "profile", "email", "roles", "phone" ]
+}
