@@ -6,6 +6,9 @@ CLIENT_ID=ipax_client_id
 CLIENT_SECRET=ipax_client_secret
 USER_NAME=demo
 USER_PASS=demo
+USER_MAIL=demo@mail.com
+USER_FIRST_NAME=User
+USER_LAST_NAME=Demo
 
 for i in {1..10}; do
     $KCADM config credentials --server http://localhost:8080/auth --realm master --user $KEYCLOAK_USER --password $KEYCLOAK_PASSWORD
@@ -15,7 +18,7 @@ for i in {1..10}; do
 
         $KCADM create clients -r $REALM_NAME -s clientId=$CLIENT_ID -s secret=$CLIENT_SECRET -s 'redirectUris=["http://localhost/redirect_uri","http://localhost/logoutSuccess"]'
 
-        $KCADM create users -r $REALM_NAME -s username=$USER_NAME -s enabled=true
+        $KCADM create users -r $REALM_NAME -s username=$USER_NAME -s enabled=true -s email=$USER_MAIL -s emailVerified=true -s firstName=$USER_FIRST_NAME -s lastName=$USER_LAST_NAME
         $KCADM set-password -r $REALM_NAME --username $USER_NAME --new-password $USER_PASS
     else
         echo "The custom realm already exists."
