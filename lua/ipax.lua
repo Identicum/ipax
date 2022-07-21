@@ -1,10 +1,19 @@
 local _M = {}
 
+
+local function isTrue(input)
+	if string.lower(input) == "true" then
+		return true
+	else
+		return false
+	end 
+end
+
 local oidc_opts = {
 	discovery = os.getenv("OIDC_DISCOVERY"),
 	ssl_verify = "no",
 	client_id = os.getenv("OIDC_CLIENT_ID"),
-	use_pkce = os.getenv("OIDC_USE_PKCE"),
+	use_pkce = isTrue(os.getenv("OIDC_USE_PKCE")),
 	client_secret = os.getenv("OIDC_CLIENT_SECRET"),
 	scope = os.getenv("OIDC_SCOPE"),
 	redirect_uri = os.getenv("OIDC_REDIRECT_URI"),
