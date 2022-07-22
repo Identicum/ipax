@@ -6,7 +6,7 @@ Create an OpenID Connect Client in your IDP using the following information:
 - Client Name: IPAx
 - Scopes: profile, openid
 - Grant Types: authorization_code
-- Redirect URIs: Include values like: "https://myapp.identicum.com/redirect_uri" (suffix is handled by `lua-resty-openidc`, can be adjusted using the `OIDC_REDIRECT_URI` environment variable)
+- Redirect URIs: Include values like: "https://myapp.identicum.com/ipax/redirect_uri" (suffix is handled by `lua-resty-openidc`, can be adjusted using the `OIDC_REDIRECT_URI` environment variable)
 
 ## Configuration files
 Samples are provided in the [conf.samples](./conf.samples/) folder.

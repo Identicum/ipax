@@ -33,7 +33,7 @@ services:
       OIDC_USE_PKCE: "false"
       OIDC_CLIENT_SECRET: ipax_client_secret
       OIDC_SCOPE: openid profile email roles phone
-      OIDC_POST_LOGOUT_REDIRECT_URI: http://localhost/logoutSuccess
+      OIDC_POST_LOGOUT_REDIRECT_URI: http://localhost/logoutSuccess.html
     ports:
       - 80:80
 
