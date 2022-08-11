@@ -20,7 +20,7 @@ local oidc_opts = {
 	logout_path = os.getenv("OIDC_LOGOUT_URI"),
 	post_logout_redirect_uri = os.getenv("OIDC_POST_LOGOUT_REDIRECT_URI"),
 	renew_access_token_on_expiry = true,
-	session_contents = {id_token=true, access_token=true, user=true}
+	session_contents = {id_token=true, enc_id_token=true, access_token=true, user=true}
 }
 
 local session_opts = {
