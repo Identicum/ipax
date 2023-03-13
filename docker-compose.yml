@@ -34,6 +34,7 @@ services:
       OIDC_CLIENT_SECRET: ipax_client_secret
       OIDC_SCOPE: openid profile email roles phone
       OIDC_POST_LOGOUT_REDIRECT_URI: http://localhost/logoutSuccess.html
+      OIDC_AUTHORIZATION_PARAMS: 
     ports:
       - 80:80
 

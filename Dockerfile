@@ -18,7 +18,8 @@ ENV NGINX_LOG_LEVEL=warn \
     OIDC_SCOPE="openid profile" \
     OIDC_REDIRECT_URI="/ipax/redirect_uri" \
     OIDC_LOGOUT_URI="/ipax/logout" \
-    OIDC_POST_LOGOUT_REDIRECT_URI="/auth"
+    OIDC_POST_LOGOUT_REDIRECT_URI="/auth" \
+    OIDC_AUTHORIZATION_PARAMS=""
 
 WORKDIR /usr/local/openresty/nginx
 

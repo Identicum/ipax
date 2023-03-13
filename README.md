@@ -26,6 +26,7 @@ docker run  -d \
     -e OIDC_REDIRECT_URI="/ipax/redirect_uri" \
     -e OIDC_SESSION_SECRET="some_uuid_secret" \
     -e OIDC_POST_LOGOUT_REDIRECT_URI="https://myapp.identicum.com/logoutSuccess.html" \
+    -e OIDC_AUTHORIZATION_PARAMS="loa-2" \
     -v $(pwd)/conf.d/:/etc/ipax/conf.d/:ro \
     identicum/ipax:latest
 ```
