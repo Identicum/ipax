@@ -1,6 +1,6 @@
 FROM openresty/openresty:1.19.9.1-centos7
 
-RUN opm install zmartzone/lua-resty-openidc
+RUN luarocks install lua-resty-openidc
 
 COPY conf/ /usr/local/openresty/nginx/conf/
 COPY lua/ /etc/ipax/lua/
