@@ -19,7 +19,7 @@ end
 
 local oidc_opts = {
 	discovery = os.getenv("OIDC_DISCOVERY"),
-	ssl_verify = "no",
+	ssl_verify = os.getenv("OIDC_SSL_VERIFY"),
 	client_id = os.getenv("OIDC_CLIENT_ID"),
 	use_pkce = isTrue(os.getenv("OIDC_USE_PKCE")),
 	client_secret = os.getenv("OIDC_CLIENT_SECRET"),
@@ -60,6 +60,11 @@ local function check_authentication(err)
 	end
 	return true
 end
+
+-- function _M.silent_check_authentication()
+-- 	local res, err = require("resty.openidc").authenticate(oidc_opts, nil, "deny")
+-- 	return err
+-- end
 
 function _M.get_user()
 	local res = _M.get_res()
