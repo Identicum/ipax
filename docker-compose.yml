@@ -3,11 +3,12 @@ version: '3'
 services:
   idp:
     container_name: idp
-    image: jboss/keycloak:15.0.2
+    image: quay.io/keycloak/keycloak:19.0.3-legacy
     restart: always
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
+      JAVA_OPTS_APPEND: -Dkeycloak.profile.feature.admin2=disabled
     volumes:
       - ./keycloak/startup-scripts/:/opt/jboss/startup-scripts/
       - ./keycloak/custom-scripts/:/opt/jboss/custom-scripts/
