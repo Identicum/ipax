@@ -22,6 +22,9 @@ http {
 	access_log  logs/access.log;
 	resolver $NGINX_RESOLVER;
 
+	lua_ssl_trusted_certificate /etc/pki/tls/certs/ca-bundle.trust.crt;
+	lua_ssl_verify_depth 3;
+
 	include mime.types;
 	default_type application/octet-stream;
 
