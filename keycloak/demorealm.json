@@ -21,7 +21,7 @@
             "baseUrl": "http://localhost",
             "redirectUris": [
                 "/ipax/redirect_uri",
-                "/ipax/"
+                "/ipax/info"
             ],
             "defaultClientScopes": [ ],
             "optionalClientScopes": [ "profile", "email", "roles", "phone" ],
@@ -30,14 +30,48 @@
             }
         }
     ],
-    "users" : [ {
-        "username": "demo",
-        "enabled" : true,
-        "createdTimestamp" : 1672531200000,
-        "email": "demo@identicum.com",
-        "emailVerified" : true,
-        "firstName": "Demo",
-        "lastName": "User",
-        "credentials" : [ {"type": "password", "value": "demo"} ]
-      } ]
+    "users" : [
+        {
+            "username": "demo",
+            "enabled" : true,
+            "createdTimestamp" : 1672531200000,
+            "email": "demo@identicum.com",
+            "emailVerified" : true,
+            "firstName": "Demo",
+            "lastName": "User",
+            "credentials" : [ {"type": "password", "value": "demo"} ],
+            "clientRoles": {
+                "account": ["delete-account"]
+            }
+        }
+    ],
+    "requiredActions": [
+        {
+            "alias": "UPDATE_PASSWORD",
+            "name": "Update Password",
+            "providerId": "UPDATE_PASSWORD",
+            "enabled": true,
+            "defaultAction": false,
+            "priority": 30,
+            "config": {}
+        },
+        {
+            "alias": "VERIFY_EMAIL",
+            "name": "Verify Email",
+            "providerId": "VERIFY_EMAIL",
+            "enabled": true,
+            "defaultAction": false,
+            "priority": 50,
+            "config": {}
+        },
+        {
+          "alias": "delete_account",
+          "name": "Delete Account",
+          "providerId": "delete_account",
+          "enabled": true,
+          "defaultAction": false,
+          "priority": 60,
+          "config": {}
+        }
+    ]
 }
