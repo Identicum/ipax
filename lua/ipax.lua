@@ -1,3 +1,124 @@
+-- --------------------------------------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------------------------------------------
+-- https://github.com/zmartzone/lua-resty-openidc/blob/master/lib/resty/openidc.lua
+
+-- get the Discovery metadata from the specified URL
+local function openidc_discover(url, ssl_verify, keepalive, timeout, exptime, proxy_opts, http_request_decorator)
+	log(DEBUG, "openidc_discover: URL is: " .. url)
+  
+	local json, err
+	local v = openidc_cache_get("discovery", url)
+	if not v then
+  
+	  log(DEBUG, "discovery data not in cache, making call to discovery endpoint")
+	  -- make the call to the discovery endpoint
+	  local httpc = http.new()
+	  openidc_configure_timeouts(httpc, timeout)
+	  openidc_configure_proxy(httpc, proxy_opts)
+	  local res, error = httpc:request_uri(url, decorate_request(http_request_decorator, {
+		ssl_verify = (ssl_verify ~= "no"),
+		keepalive = (keepalive ~= "no")
+	  }))
+	  if not res then
+		err = "accessing discovery url (" .. url .. ") failed: " .. error
+		log(ERROR, err)
+	  else
+		log(DEBUG, "response data: " .. res.body)
+		json, err = openidc_parse_json_response(res)
+		if json then
+		  openidc_cache_set("discovery", url, cjson.encode(json), exptime or 24 * 60 * 60)
+		else
+		  err = "could not decode JSON from Discovery data" .. (err and (": " .. err) or '')
+		  log(ERROR, err)
+		end
+	  end
+  
+	else
+	  json = cjson.decode(v)
+	end
+  
+	return json, err
+  end
+  
+  -- turn a discovery url set in the opts dictionary into the discovered information
+  local function openidc_ensure_discovered_data(opts)
+	local err
+	if type(opts.discovery) == "string" then
+	  local discovery
+	  discovery, err = openidc_discover(opts.discovery, opts.ssl_verify, opts.keepalive, opts.timeout, opts.discovery_expires_in, opts.proxy_opts,
+										opts.http_request_decorator)
+	  if not err then
+		opts.discovery = discovery
+	  end
+	end
+	return err
+  end
+
+  local function get_first(table_or_string)
+	local res = table_or_string
+	if table_or_string and type(table_or_string) == 'table' then
+	  res = table_or_string[1]
+	end
+	return res
+end
+
+local function get_first_header(headers, header_name)
+	local header = headers[header_name]
+	return get_first(header)
+end
+
+local function get_first_header_and_strip_whitespace(headers, header_name)
+	local header = get_first_header(headers, header_name)
+	return header and header:gsub('%s', '')
+end
+
+local function get_forwarded_parameter(headers, param_name)
+	local forwarded = get_first_header(headers, 'Forwarded')
+	local params = {}
+	if forwarded then
+	  local function parse_parameter(pv)
+		local name, value = pv:match("^%s*([^=]+)%s*=%s*(.-)%s*$")
+		if name and value then
+		  if value:sub(1, 1) == '"' then
+			value = value:sub(2, -2)
+		  end
+		  params[name:lower()] = value
+		end
+	  end
+	  -- this assumes there is no quoted comma inside the header's value
+	  -- which should be fine as comma is not legal inside a node name,
+	  -- a URI scheme or a host name. The only thing that might bite us
+	  -- are extensions.
+	  local first_part = forwarded
+	  local first_comma = forwarded:find("%s*,%s*")
+	  if first_comma then
+		first_part = forwarded:sub(1, first_comma - 1)
+	  end
+	  first_part:gsub("[^;]+", parse_parameter)
+	end
+	return params[param_name:gsub("^%s*(.-)%s*$", "%1"):lower()]
+end
+
+local function get_scheme(headers)
+	return get_forwarded_parameter(headers, 'proto')
+		or get_first_header_and_strip_whitespace(headers, 'X-Forwarded-Proto')
+		or ngx.var.scheme
+end
+
+local function get_host_name_from_x_header(headers)
+	local header = get_first_header_and_strip_whitespace(headers, 'X-Forwarded-Host')
+	return header and header:gsub('^([^,]+),?.*$', '%1')
+end
+  
+local function get_host_name(headers)
+	return get_forwarded_parameter(headers, 'host')
+		or get_host_name_from_x_header(headers)
+		or ngx.var.http_host
+end
+
+-- --------------------------------------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------------------------------------------
+-- IPAx module
 local _M = {}
 
 
@@ -9,11 +130,14 @@ local function isTrue(input)
 	end 
 end
 
-local function getAuthorizationParams(acr_values)
+local function getAuthorizationParams()
 	local authorizationParamsTable = {}
+
+	local acr_values = os.getenv("OIDC_ACR_VALUES")
 	if acr_values ~= '' then
 		authorizationParamsTable["acr_values"]=acr_values
 	end
+
 	return authorizationParamsTable
 end
 
@@ -27,7 +151,7 @@ local oidc_opts = {
 	redirect_uri = os.getenv("OIDC_REDIRECT_URI"),
 	logout_path = os.getenv("OIDC_LOGOUT_URI"),
 	post_logout_redirect_uri = os.getenv("OIDC_POST_LOGOUT_REDIRECT_URI"),
-	authorization_params = getAuthorizationParams(os.getenv("OIDC_ACR_VALUES")),
+	authorization_params = getAuthorizationParams(),
 	renew_access_token_on_expiry = true,
 	session_contents = {id_token=true, enc_id_token=true, access_token=true, user=true}
 }
@@ -114,6 +238,36 @@ function _M.get_group_names(claim_values, separator)
 		group_names[index] = object_name
 	end
 	return table.concat(group_names, separator)
+end
+
+local function get_kc_user_action_url(kc_action)
+	local headers = ngx.req.get_headers()
+	local redirect_uri = get_scheme(headers) .. "://" .. get_host_name(headers) .. "/ipax/"
+	local params = {
+		client_id = oidc_opts.client_id,
+		response_type = "code",
+		scope = "openid",
+		redirect_uri = redirect_uri,
+		kc_action = kc_action
+	}
+	return oidc_opts.discovery.authorization_endpoint .. "?" .. ngx.encode_args(params)
+end
+
+function _M.get_user_actions()
+	local userActionsTable = {}
+
+	userActionsTable["logout"]='<a id="logout-button" href="/ipax/logout">Logout</a>'
+
+	local kc_update_password_action = os.getenv("KC_UPDATE_PASSWORD_ACTION")
+	if kc_update_password_action ~= '' then
+		userActionsTable["kc_update_password_action"]='<a id="update-password-button" href="' .. get_kc_user_action_url(kc_update_password_action) .. '">Update password</a>'
+	end
+
+	if os.getenv("KC_DELETE_ACCOUNT_ACTION") ~= '' then
+		userActionsTable["kc_delete_account_action"]='<a id="delete-account-button" href="/ipax/kc_delete_account">Delete account</a>'
+	end
+
+	return userActionsTable
 end
 
 return _M
