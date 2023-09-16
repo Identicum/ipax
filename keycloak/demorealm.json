@@ -20,7 +20,8 @@
             "rootUrl": "http://localhost",
             "baseUrl": "http://localhost",
             "redirectUris": [
-                "/ipax/redirect_uri"
+                "/ipax/redirect_uri",
+                "/ipax/"
             ],
             "defaultClientScopes": [ ],
             "optionalClientScopes": [ "profile", "email", "roles", "phone" ],
