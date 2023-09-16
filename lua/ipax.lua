@@ -242,7 +242,7 @@ end
 
 local function get_kc_user_action_url(kc_action)
 	local headers = ngx.req.get_headers()
-	local redirect_uri = get_scheme(headers) .. "://" .. get_host_name(headers) .. "/ipax/"
+	local redirect_uri = get_scheme(headers) .. "://" .. get_host_name(headers) .. "/ipax/info"
 	local params = {
 		client_id = oidc_opts.client_id,
 		response_type = "code",
