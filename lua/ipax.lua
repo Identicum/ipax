@@ -85,10 +85,7 @@ local function get_forwarded_parameter(headers, param_name)
 		  params[name:lower()] = value
 		end
 	  end
-	  -- this assumes there is no quoted comma inside the header's value
-	  -- which should be fine as comma is not legal inside a node name,
-	  -- a URI scheme or a host name. The only thing that might bite us
-	  -- are extensions.
+	  -- this assumes there is no quoted comma inside the header's value which should be fine as comma is not legal inside a node name, a URI scheme or a host name. The only thing that might bite us are extensions.
 	  local first_part = forwarded
 	  local first_comma = forwarded:find("%s*,%s*")
 	  if first_comma then
@@ -185,11 +182,6 @@ local function check_authentication(err)
 	return true
 end
 
--- function _M.silent_check_authentication()
--- 	local res, err = require("resty.openidc").authenticate(oidc_opts, nil, "deny")
--- 	return err
--- end
-
 function _M.get_user()
 	local res = _M.get_res()
 	return res.user
@@ -263,8 +255,9 @@ function _M.get_user_actions()
 		userActionsTable["kc_update_password_action"]='<a id="update-password-button" href="' .. get_kc_user_action_url(kc_update_password_action) .. '">Update password</a>'
 	end
 
-	if os.getenv("KC_DELETE_ACCOUNT_ACTION") ~= '' then
-		userActionsTable["kc_delete_account_action"]='<a id="delete-account-button" href="/ipax/kc_delete_account">Delete account</a>'
+	local kc_delete_account_action = os.getenv("KC_DELETE_ACCOUNT_ACTION")
+	if kc_delete_account_action ~= '' then
+		userActionsTable["kc_delete_account_action"]='<a id="delete-account-button" href="' .. get_kc_user_action_url(kc_delete_account_action) .. '">Delete account</a>'
 	end
 
 	return userActionsTable
