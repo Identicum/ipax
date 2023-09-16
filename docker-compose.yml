@@ -21,13 +21,15 @@ services:
       - 80:80
     environment:
       NGINX_RESOLVER: 127.0.0.11 valid=5s
-      NGINX_LOG_LEVEL: debug
+      NGINX_LOG_LEVEL: info
       OIDC_DISCOVERY: http://idp:8080/realms/demorealm/.well-known/openid-configuration
       OIDC_CLIENT_ID: ipax_client_id
       OIDC_USE_PKCE: "false"
       OIDC_CLIENT_SECRET: ipax_client_secret
       OIDC_SCOPE: openid profile email roles phone
       OIDC_POST_LOGOUT_REDIRECT_URI: http://localhost/logoutSuccess.html
+      KC_UPDATE_PASSWORD_ACTION: UPDATE_PASSWORD
+      KC_DELETE_ACCOUNT_ACTION: delete_account
     volumes:
       - ./conf/info.conf:/usr/local/openresty/nginx/conf/info.conf
       - ./conf/lua.conf:/usr/local/openresty/nginx/conf/lua.conf
@@ -36,3 +38,6 @@ services:
       - ./conf/server.conf:/usr/local/openresty/nginx/conf/server.conf
       - ./html/:/var/ipax/html/
       - ./lua/:/etc/ipax/lua/
+    depends_on:
+      idp:
+        condition: service_started

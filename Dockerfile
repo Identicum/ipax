@@ -1,4 +1,4 @@
-FROM openresty/openresty:1.19.9.1-centos7
+FROM openresty/openresty:1.21.4.2-centos7
 
 RUN luarocks install lua-resty-openidc
 RUN luarocks install lua-resty-template
@@ -21,7 +21,9 @@ ENV NGINX_LOG_LEVEL=warn \
     OIDC_REDIRECT_URI="/ipax/redirect_uri" \
     OIDC_LOGOUT_URI="/ipax/logout" \
     OIDC_POST_LOGOUT_REDIRECT_URI="/auth" \
-    OIDC_ACR_VALUES=""
+    OIDC_ACR_VALUES="" \
+    KC_UPDATE_PASSWORD_ACTION="" \
+    KC_DELETE_ACCOUNT_ACTION=""
 
 WORKDIR /usr/local/openresty/nginx
 
