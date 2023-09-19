@@ -182,6 +182,13 @@ function _M.get_user()
 	return res.user
 end
 
+function _M.get_userinfo_json()
+	local res = _M.get_res()
+	local json = require("json").encode(res.user)
+	ngx.log(ngx.DEBUG, "userinfo_json: " .. json)
+	return json
+end
+
 function _M.get_id_token()
 	local res = _M.get_res()
 	return res.id_token
