@@ -6,6 +6,7 @@ RUN luarocks install lua-resty-template
 COPY conf/ /usr/local/openresty/nginx/conf/
 COPY lua/ /etc/ipax/lua/
 COPY html /var/ipax/html
+COPY templates /var/ipax/templates
 
 ENV NGINX_LOG_LEVEL=warn \
     NGINX_RESOLVER=8.8.8.8 \
@@ -18,12 +19,15 @@ ENV NGINX_LOG_LEVEL=warn \
     OIDC_USE_PKCE=false \
     OIDC_CLIENT_SECRET="" \
     OIDC_SCOPE="openid profile" \
-    OIDC_REDIRECT_URI="/ipax/redirect_uri" \
-    OIDC_LOGOUT_URI="/ipax/logout" \
+    OIDC_REDIRECT_URI="/private/redirect_uri" \
+    OIDC_LOGOUT_URI="/private/logout" \
     OIDC_POST_LOGOUT_REDIRECT_URI="/auth" \
     OIDC_ACR_VALUES="" \
     KC_UPDATE_PASSWORD_ACTION="" \
-    KC_DELETE_ACCOUNT_ACTION=""
+    KC_DELETE_ACCOUNT_ACTION="" \
+    KC_UPDATE_PASSWORD_LABEL="Update password" \
+    KC_DELETE_ACCOUNT_LABEL="Delete account" \
+    IPAX_APP_NAME="IPAx"
 
 WORKDIR /usr/local/openresty/nginx
 
