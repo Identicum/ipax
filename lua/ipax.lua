@@ -244,20 +244,34 @@ function _M.check_multivalued_user_claim(claim_values, check_item)
 	return false
 end
 
-function _M.get_group_names(claim_values, separator)
-	if claim_values == nil then
-		ngx.log(ngx.DEBUG, 'claim_values is null.')
-		return ""
+function _M.is_value_in_list(value_list, check_item)
+	for index, value in pairs(value_list) do
+		if value == check_item then
+			return true
+		end
 	end
+	return false
+end
+
+function _M.get_names_from_dns(object_dns)
+	local object_names={}
+	if object_dns == nil then
+		ngx.log(ngx.DEBUG, 'get_names_from_dns() object_dns is nil')
+		return object_names
+	end
+	for index, value in pairs(object_dns) do
+		local object_rdn = split(value, ",")[1]
+		local object_name = split(object_rdn, "=")[2]
+		object_names[index] = object_name
+	end
+	return object_names
+end
+
+function _M.get_group_names(claim_values, separator)
 	if separator == nil then
 		separator = "|"
 	end
-	local group_names = {}
-	for index, value in pairs(claim_values) do
-		local object_rdn = split(value, ",")[1]
-		local object_name = split(object_rdn, "=")[2]
-		group_names[index] = object_name
-	end
+	local group_names = _M.get_names_from_dns(claim_values)
 	return table.concat(group_names, separator)
 end
 
