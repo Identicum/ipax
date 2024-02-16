@@ -32,7 +32,7 @@ services:
       OIDC_POST_LOGOUT_REDIRECT_URI: http://localhost/logoutSuccess.html
       KC_DELETE_ACCOUNT_ACTION: delete_account
       KC_DELETE_ACCOUNT_LABEL: Delete user
-      KC_UPDATE_EMAIL_ACTION: update-email
+      KC_UPDATE_EMAIL_ACTION: UPDATE_EMAIL
       KC_UPDATE_PASSWORD_ACTION: UPDATE_PASSWORD
     volumes:
       - ./conf/info.conf:/usr/local/openresty/nginx/conf/info.conf

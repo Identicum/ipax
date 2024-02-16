@@ -73,7 +73,16 @@
           "defaultAction": false,
           "priority": 60,
           "config": {}
-        }
+        },
+        {
+            "alias": "UPDATE_EMAIL",
+            "name": "Update Email",
+            "providerId": "UPDATE_EMAIL",
+            "enabled": true,
+            "defaultAction": false,
+            "priority": 61,
+            "config": {}
+          }
     ],
     "smtpServer": {
         "port": "1025",
