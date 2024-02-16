@@ -23,10 +23,12 @@ ENV NGINX_LOG_LEVEL=warn \
     OIDC_LOGOUT_URI="/private/logout" \
     OIDC_POST_LOGOUT_REDIRECT_URI="/auth" \
     OIDC_ACR_VALUES="" \
-    KC_UPDATE_PASSWORD_ACTION="" \
     KC_DELETE_ACCOUNT_ACTION="" \
-    KC_UPDATE_PASSWORD_LABEL="Update password" \
     KC_DELETE_ACCOUNT_LABEL="Delete account" \
+    KC_UPDATE_EMAIL_ACTION="" \
+    KC_UPDATE_EMAIL_LABEL="Update email" \
+    KC_UPDATE_PASSWORD_ACTION="" \
+    KC_UPDATE_PASSWORD_LABEL="Update password" \
     IPAX_APP_NAME="IPAx"
 
 WORKDIR /usr/local/openresty/nginx

@@ -292,15 +292,19 @@ end
 function _M.get_user_actions()
 	local userActionsTable = {}
 
+	local kc_delete_account_action = os.getenv("KC_DELETE_ACCOUNT_ACTION")
+	if kc_delete_account_action ~= '' then
+		userActionsTable["kc_delete_account_action"]='<a id="delete-account-button" href="' .. get_kc_user_action_url(kc_delete_account_action) .. '">' .. os.getenv("KC_DELETE_ACCOUNT_LABEL") .. '</a>'
+	end
 
 	local kc_update_password_action = os.getenv("KC_UPDATE_PASSWORD_ACTION")
 	if kc_update_password_action ~= '' then
 		userActionsTable["kc_update_password_action"]='<a id="update-password-button" href="' .. get_kc_user_action_url(kc_update_password_action) .. '">' .. os.getenv("KC_UPDATE_PASSWORD_LABEL") .. '</a>'
 	end
 
-	local kc_delete_account_action = os.getenv("KC_DELETE_ACCOUNT_ACTION")
-	if kc_delete_account_action ~= '' then
-		userActionsTable["kc_delete_account_action"]='<a id="delete-account-button" href="' .. get_kc_user_action_url(kc_delete_account_action) .. '">' .. os.getenv("KC_DELETE_ACCOUNT_LABEL") .. '</a>'
+	local kc_update_email_action = os.getenv("KC_UPDATE_EMAIL_ACTION")
+	if kc_update_email_action ~= '' then
+		userActionsTable["kc_update_email_action"]='<a id="update-email-button" href="' .. get_kc_user_action_url(kc_update_email_action) .. '">' .. os.getenv("KC_UPDATE_EMAIL_LABEL") .. '</a>'
 	end
 
 	return userActionsTable

@@ -11,6 +11,7 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_FEATURES: update-email
     volumes:
       - ./keycloak/:/opt/keycloak/data/import/
     command: "start-dev --import-realm"
@@ -29,9 +30,10 @@ services:
       OIDC_CLIENT_SECRET: ipax_client_secret
       OIDC_SCOPE: openid profile email roles phone
       OIDC_POST_LOGOUT_REDIRECT_URI: http://localhost/logoutSuccess.html
-      KC_UPDATE_PASSWORD_ACTION: UPDATE_PASSWORD
       KC_DELETE_ACCOUNT_ACTION: delete_account
       KC_DELETE_ACCOUNT_LABEL: Delete user
+      KC_UPDATE_EMAIL_ACTION: update-email
+      KC_UPDATE_PASSWORD_ACTION: UPDATE_PASSWORD
     volumes:
       - ./conf/info.conf:/usr/local/openresty/nginx/conf/info.conf
       - ./conf/lua.conf:/usr/local/openresty/nginx/conf/lua.conf
@@ -44,3 +46,9 @@ services:
     depends_on:
       idp:
         condition: service_healthy
+  mailcatcher:
+    container_name: mailcatcher
+    image: schickling/mailcatcher:latest
+    restart: always
+    ports:
+      - 1080:1080

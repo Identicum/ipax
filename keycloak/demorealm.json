@@ -4,6 +4,7 @@
     "registrationAllowed" : true,
     "registrationEmailAsUsername" : false,
     "verifyEmail" : true,
+    "editUsernameAllowed": true,
     "loginWithEmailAllowed" : true,
     "duplicateEmailsAllowed" : false,
     "resetPasswordAllowed" : true,
@@ -41,7 +42,7 @@
             "lastName": "User",
             "credentials" : [ {"type": "password", "value": "demo"} ],
             "clientRoles": {
-                "account": ["delete-account"]
+                "account": ["delete-account", "view-profile", "manage-account"]
             }
         }
     ],
@@ -73,5 +74,11 @@
           "priority": 60,
           "config": {}
         }
-    ]
+    ],
+    "smtpServer": {
+        "port": "1025",
+        "host": "mailcatcher",
+        "from": "no-reply@identicum.com",
+        "ssl": "false"
+      }
 }
