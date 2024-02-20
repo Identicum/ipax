@@ -1,4 +1,4 @@
-FROM openresty/openresty:1.21.4.2-centos7
+FROM openresty/openresty:1.25.3.1-alpine-fat
 
 RUN luarocks install lua-resty-openidc
 RUN luarocks install lua-resty-template
@@ -33,4 +33,4 @@ ENV NGINX_LOG_LEVEL=warn \
 
 WORKDIR /usr/local/openresty/nginx
 
-CMD ["sh", "-c", "envsubst < conf/nginx.conf.template > conf/nginx.conf && /usr/bin/openresty -g 'daemon off;'"]
+CMD ["sh", "-c", "envsubst < conf/nginx.conf.template > conf/nginx.conf && /usr/local/openresty/bin/openresty -g 'daemon off;'"]
