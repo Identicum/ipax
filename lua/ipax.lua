@@ -179,7 +179,8 @@ local session_opts = {
 	secret = os.getenv("SESSION_SECRET"),
 	cookie = {
 		persistent = os.getenv("SESSION_COOKIE_PERSISTENT"),
-		lifetime   = os.getenv("SESSION_COOKIE_LIFETIME")
+		lifetime   = os.getenv("SESSION_COOKIE_LIFETIME"),
+		samesite   = os.getenv("SESSION_COOKIE_SAMESITE")
 	}
 }
 
