@@ -46,7 +46,7 @@ services:
         condition: service_healthy
   mailcatcher:
     container_name: mailcatcher
-    image: schickling/mailcatcher:latest
+    image: ghcr.io/identicum/mailcatcher:latest
     restart: always
     ports:
       - 1080:1080
