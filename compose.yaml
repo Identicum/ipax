@@ -35,6 +35,7 @@ services:
     volumes:
       - ./conf/info.conf:/usr/local/openresty/nginx/conf/info.conf
       - ./conf/lua.conf:/usr/local/openresty/nginx/conf/lua.conf
+      - ./conf/filter_cookie.conf:/usr/local/openresty/nginx/conf/filter_cookie.conf
       - ./conf/nginx.conf.template:/usr/local/openresty/nginx/conf/nginx.conf.template
       - ./conf/norobots.conf:/usr/local/openresty/nginx/conf/norobots.conf
       - ./conf/server.conf:/usr/local/openresty/nginx/conf/server.conf
