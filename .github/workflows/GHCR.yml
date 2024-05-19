@@ -1,7 +1,14 @@
 on:
   push:
     branches:
-      - main
+    - main
+    paths:
+    - 'conf/**'
+    - 'html/**'
+    - 'lua/**'
+    - 'templates/**'
+    - Dockerfile
+  workflow_dispatch:
 env:
   CONTAINER_IMAGE: ghcr.io/identicum/${{github.event.repository.name}}:latest
 jobs:
@@ -17,4 +24,4 @@ jobs:
         username: ${{github.actor}}
         password: ${{secrets.GITHUB_TOKEN}}
     - name: Build and Push
-      run: docker buildx build -t ${{env.CONTAINER_IMAGE}} --push --platform=linux/arm64,linux/amd64 .
+      run: docker buildx build -t ${{env.CONTAINER_IMAGE}} --push --platform=linux/amd64,linux/arm64,linux/arm64v8 .
