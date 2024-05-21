@@ -1,3 +1,5 @@
+name: docker-build
+
 on:
   push:
     branches:
@@ -9,10 +11,9 @@ on:
     - 'templates/**'
     - Dockerfile
   workflow_dispatch:
-env:
-  CONTAINER_IMAGE: ghcr.io/identicum/${{github.event.repository.name}}:latest
+
 jobs:
-  build-and-push:
+  docker-build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -23,5 +24,8 @@ jobs:
         registry: ghcr.io
         username: ${{github.actor}}
         password: ${{secrets.GITHUB_TOKEN}}
-    - name: Build and Push
-      run: docker buildx build -t ${{env.CONTAINER_IMAGE}} --push --platform=linux/amd64,linux/arm64,linux/arm64v8 .
+    - uses: docker/build-push-action@v5
+      with:
+        push: true
+        tags: ghcr.io/identicum/${{github.event.repository.name}}:latest
+        platforms: linux/amd64,linux/arm64
