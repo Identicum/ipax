@@ -308,6 +308,11 @@ function _M.get_user_actions()
 		userActionsTable["kc_update_email_action"]='<a id="update-email-button" href="' .. get_kc_user_action_url(kc_update_email_action) .. '">' .. os.getenv("KC_UPDATE_EMAIL_LABEL") .. '</a>'
 	end
 
+	local kc_enrol_biometrics_action = os.getenv("KC_ENROL_BIOMETRICS_ACTION")
+	if kc_enrol_biometrics_action ~= '' then
+		userActionsTable["kc_enrol_biometrics_action"]='<a id="enrol-biometrics-button" href="' .. get_kc_user_action_url(kc_enrol_biometrics_action) .. '">' .. os.getenv("KC_ENROL_BIOMETRICS_LABEL") .. '</a>'
+	end
+
 	return userActionsTable
 end
 

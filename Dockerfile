@@ -30,6 +30,8 @@ ENV NGINX_LOG_LEVEL=warn \
     KC_UPDATE_EMAIL_LABEL="Update email" \
     KC_UPDATE_PASSWORD_ACTION="" \
     KC_UPDATE_PASSWORD_LABEL="Update password" \
+    KC_ENROL_BIOMETRICS_ACTION="" \
+    KC_ENROL_BIOMETRICS_LABEL="Enrol biometrics" \
     IPAX_APP_NAME="IPAx" \
     API_BASEURL=""
 
