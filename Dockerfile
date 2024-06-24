@@ -30,7 +30,8 @@ ENV NGINX_LOG_LEVEL=warn \
     KC_UPDATE_EMAIL_LABEL="Update email" \
     KC_UPDATE_PASSWORD_ACTION="" \
     KC_UPDATE_PASSWORD_LABEL="Update password" \
-    IPAX_APP_NAME="IPAx"
+    IPAX_APP_NAME="IPAx" \
+    API_BASEURL=""
 
 WORKDIR /usr/local/openresty/nginx
 
