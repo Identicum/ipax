@@ -217,6 +217,26 @@ function _M.get_userinfo_json()
 	return json
 end
 
+function _M.get_preferred_name_from_userinfo()
+    ngx.log(ngx.DEBUG, "preferred_username: " .. (preferred_username or "nil"))
+    local userinfo_json = _M.get_userinfo_json()
+    local userinfo_table = require("json").decode(userinfo_json)
+    local preferred_username = userinfo_table.preferred_username
+    ngx.log(ngx.DEBUG, "preferred_username: " .. (preferred_username or "nil"))
+    return preferred_username
+end
+
+function _M.get_preferred_username_from_userinfo_or_idtoken()
+    local id_token = _M.get_id_token() 
+    local preferred_username = id_token.preferred_username
+
+	if preferred_username == nil then
+		return _M.get_preferred_name_from_userinfo()
+    else
+		return preferred_username
+    end
+end
+
 function _M.get_id_token()
 	local res = _M.get_res()
 	return res.id_token
