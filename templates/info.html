@@ -155,7 +155,7 @@
                                 </thead>
                                 <tbody>
                                     <tr><td style='word-break:break-word;white-space:pre-wrap;-moz-white-space:pre-wrap;'>{{access_token}}</td></tr>
-                                    <tr><td>View in <a href='https://jwt.io/?value="{{access_token}}"' target='_blank'>https://jwt.io/</a></td></tr>
+                                    <tr id="secondRow"><td>View in <a href='https://jwt.io/?value="{{access_token}}"' target='_blank'>https://jwt.io/</a></td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -217,6 +217,12 @@
             window.onload = function(){
                 const userinfo = JSON.parse('{{userinfo_json}}'.replace(/&quot;/g,'"'));
                 document.getElementById("userinfojson").innerHTML = JSON.stringify(userinfo, null, "\t");
+            }
+
+            const accessToken = "{{access_token}}";
+
+            if (!accessToken.startsWith("ey")) {
+                document.getElementById("secondRow").style.display = "none";
             }
         </script>
     </body>
