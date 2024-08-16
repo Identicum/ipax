@@ -174,6 +174,10 @@ local oidc_opts = {
 	renew_access_token_on_expiry = true,
 	session_contents = {id_token=true, enc_id_token=true, access_token=true, user=true}
 }
+local prompt_override = os.getenv("OIDC_PROMPT")
+if prompt_override ~= '' then
+	oidc_opts["prompt"]=prompt_override
+end
 
 local session_opts = {
 	secret = os.getenv("SESSION_SECRET"),

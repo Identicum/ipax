@@ -23,6 +23,7 @@ ENV NGINX_LOG_LEVEL=warn \
     OIDC_REDIRECT_URI="/private/redirect_uri" \
     OIDC_LOGOUT_URI="/private/logout" \
     OIDC_POST_LOGOUT_REDIRECT_URI="/auth" \
+    OIDC_PROMPT="" \
     OIDC_ACR_VALUES="" \
     KC_DELETE_ACCOUNT_ACTION="" \
     KC_DELETE_ACCOUNT_LABEL="Delete account" \
