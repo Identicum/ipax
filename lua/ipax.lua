@@ -201,10 +201,7 @@ end
 
 local function check_authentication(err)
 	if err then
-		ngx.status = 500
-		ngx.say(err)
-		ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
-		return false
+		return ngx.redirect("/authenticationError.html", ngx.HTTP_MOVED_TEMPORARILY)
 	end
 	return true
 end
