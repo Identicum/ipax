@@ -201,7 +201,13 @@ end
 
 local function check_authentication(err)
 	if err then
-		return ngx.redirect("/authenticationError.html", ngx.HTTP_MOVED_TEMPORARILY)
+		-- ngx.log(ngx.DEBUG, "check_authentication() err: " .. err)
+		error = string.match(err, "error=(.*)&+")
+		if (error == 'login_required') then
+			return ngx.redirect("/loginRequired.html", ngx.HTTP_MOVED_TEMPORARILY)
+		else
+			return ngx.redirect("/authenticationError.html", ngx.HTTP_MOVED_TEMPORARILY)
+		end
 	end
 	return true
 end
