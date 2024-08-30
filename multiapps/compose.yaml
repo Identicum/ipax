@@ -13,8 +13,8 @@ services:
     volumes:
       - ./keycloak/:/opt/keycloak/data/import/
     command: "start-dev --import-realm"
-  ipax:
-    container_name: ipax
+  demoapps:
+    container_name: demoapps
     image: ghcr.io/identicum/ipax:latest
     restart: always
     ports:
