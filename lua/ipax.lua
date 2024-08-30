@@ -199,7 +199,7 @@ local function split(input, separator)
 	return t
 end
 
-local function check_authentication(err)
+function _M.check_authentication(err)
 	if err then
 		-- ngx.log(ngx.DEBUG, "check_authentication() err: " .. err)
 		error = string.match(err, "error=(.*)&+")
@@ -257,7 +257,7 @@ end
 function _M.get_res()
 	local res, err, target, session = require("resty.openidc").authenticate(oidc_opts, null, action, session_opts)
 	session:close()
-	local authentication_feedback = check_authentication(err)
+	local authentication_feedback = _M.check_authentication(err)
 	return res
 end
 
