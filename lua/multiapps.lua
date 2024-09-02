@@ -49,7 +49,11 @@ function _M.get_preferred_name_from_userinfo(res)
     local userinfo_json = _M.get_userinfo_json(res)
     local userinfo_table = require("json").decode(userinfo_json)
     local preferred_username = userinfo_table.preferred_username
-    return preferred_username
+	if preferred_username == nil then
+		return "(unknown)"
+    else
+		return preferred_username
+    end
 end
 
 function _M.get_preferred_username_from_userinfo_or_idtoken(res)
