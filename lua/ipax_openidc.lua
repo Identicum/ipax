@@ -4,6 +4,7 @@
 local _M = {}
 local http = require("resty.http")
 local cjson = require("cjson")
+local cjson_s = require("cjson.safe")
 
 local function openidc_cache_get(type, key)
 	local dict = ngx.shared[type]
