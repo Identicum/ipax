@@ -23,9 +23,11 @@ services:
       NGINX_RESOLVER: 127.0.0.11 valid=5s
       NGINX_LOG_LEVEL: debug
     volumes:
-      - ./server.conf:/usr/local/openresty/nginx/conf/server.conf
-      - ../conf/demoapp.conf:/usr/local/openresty/nginx/conf/demoapp.conf
       - ../lua/:/etc/ipax/lua/
+      - ../conf/nginx.conf.template:/usr/local/openresty/nginx/conf/nginx.conf.template
+      - ../conf/demoapp.conf:/usr/local/openresty/nginx/conf/demoapp.conf
+      - ../conf/demoapp_default_variables.conf:/usr/local/openresty/nginx/conf/demoapp_default_variables.conf
+      - ./server.conf:/usr/local/openresty/nginx/conf/server.conf
       - ./conf.d/:/etc/ipax/conf.d/
     depends_on:
       idp:
