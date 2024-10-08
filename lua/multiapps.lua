@@ -61,7 +61,7 @@ function _M.get_preferred_username_from_userinfo_or_idtoken(res)
     local preferred_username = id_token.preferred_username
 
 	if preferred_username == nil then
-		return _M.get_preferred_name_from_userinfo()
+		return _M.get_preferred_name_from_userinfo(res)
     else
 		return preferred_username
     end
