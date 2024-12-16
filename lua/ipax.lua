@@ -254,8 +254,15 @@ function _M.get_access_token()
 	return res.access_token
 end
 
+function _M.get_refresh_token()
+	local res = _M.get_res()
+	return res.refresh_token
+end
+
 function _M.get_res()
 	local res, err, target, session = require("resty.openidc").authenticate(oidc_opts, null, action, session_opts)
+    --ngx.log(ngx.DEBUG, "refresh_token: " .. session:get("refresh_token"))
+	res["refresh_token"] = session:get("refresh_token")
 	session:close()
 	local authentication_feedback = _M.check_authentication(err)
 	return res

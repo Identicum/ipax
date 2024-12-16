@@ -123,6 +123,7 @@
                     <div class='nav flex-column nav-pills' id='v-pills-tab' role='tablist' aria-orientation='vertical'>
                         <button class='nav-link text-start active' id='v-pills-id-token-tab' data-bs-toggle="pill" data-bs-target='#v-pills-id-token' type="button" role='tab' aria-controls='v-pills-id-token' aria-selected='true'>ID token Claims</button>
                         <button class='nav-link text-start' id='v-pills-access-token-tab' data-bs-toggle="pill" data-bs-target='#v-pills-access-token' type="button" role='tab' aria-controls='v-pills-access-token' aria-selected='true'>Access token</button>
+                        <button class='nav-link text-start' id='v-pills-refresh-token-tab' data-bs-toggle="pill" data-bs-target='#v-pills-refresh-token' type="button" role='tab' aria-controls='v-pills-refresh-token' aria-selected='true'>Refresh token</button>
                         <button class='nav-link text-start' id='v-pills-userinfo-claims-tab' data-bs-toggle="pill" data-bs-target='#v-pills-userinfo-claims' type="button" role='tab' aria-controls='v-pills-userinfo-claims' aria-selected='true'>Userinfo Claims</button>
                         <button class='nav-link text-start' id='v-pills-userinfo-json-tab' data-bs-toggle="pill" data-bs-target='#v-pills-userinfo-json' type="button" role='tab' aria-controls='v-pills-userinfo-json' aria-selected='true'>Userinfo JSON</button>
                         <button class='nav-link text-start' id='v-pills-http-headers-tab' data-bs-toggle="pill" data-bs-target='#v-pills-http-headers' type="button" role='tab' aria-controls='v-pills-http-headers' aria-selected='true'>HTTP headers</button>
@@ -156,6 +157,19 @@
                                 <tbody>
                                     <tr><td style='word-break:break-word;white-space:pre-wrap;-moz-white-space:pre-wrap;'>{{access_token}}</td></tr>
                                     <tr id="secondRow"><td>View in <a href='https://jwt.io/?value={{access_token}}' target='_blank'>https://jwt.io/</a></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class='tab-pane fade show' id='v-pills-refresh-token' role='tabpanel' aria-labelledby='v-pills-refresh-token-tab'>
+                            <table class='table table-striped code-content'>
+                                <thead>
+                                    <tr>
+                                        <th>Refresh token</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td style='word-break:break-word;white-space:pre-wrap;-moz-white-space:pre-wrap;'>{{refresh_token}}</td></tr>
+                                    <tr id="secondRow"><td>View in <a href='https://jwt.io/?value={{refresh_token}}' target='_blank'>https://jwt.io/</a></td></tr>
                                 </tbody>
                             </table>
                         </div>
