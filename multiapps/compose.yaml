@@ -16,6 +16,7 @@ services:
   demoapps:
     container_name: demoapps
     image: ghcr.io/identicum/ipax:latest
+    pull_policy: always
     restart: always
     ports:
       - 80:80
@@ -27,6 +28,7 @@ services:
       - ../conf/nginx.conf.template:/usr/local/openresty/nginx/conf/nginx.conf.template
       - ../conf/demoapp.conf:/usr/local/openresty/nginx/conf/demoapp.conf
       - ../conf/demoapp_default_variables.conf:/usr/local/openresty/nginx/conf/demoapp_default_variables.conf
+      - ../templates:/var/ipax/templates/
       - ./server.conf:/usr/local/openresty/nginx/conf/server.conf
       - ./conf.d/:/etc/ipax/conf.d/
     depends_on:
