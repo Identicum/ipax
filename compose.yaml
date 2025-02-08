@@ -13,6 +13,7 @@ services:
     volumes:
       - ./keycloak/:/opt/keycloak/data/import/
     command: "start-dev --import-realm"
+
   ipax:
     container_name: ipax
     image: ghcr.io/identicum/ipax:latest
@@ -33,6 +34,7 @@ services:
       KC_UPDATE_EMAIL_ACTION: UPDATE_EMAIL
       KC_UPDATE_PASSWORD_ACTION: UPDATE_PASSWORD
     volumes:
+      - ./conf/health.conf:/usr/local/openresty/nginx/conf/health.conf
       - ./conf/info.conf:/usr/local/openresty/nginx/conf/info.conf
       - ./conf/lua.conf:/usr/local/openresty/nginx/conf/lua.conf
       - ./conf/filter_cookie.conf:/usr/local/openresty/nginx/conf/filter_cookie.conf
@@ -42,9 +44,16 @@ services:
       - ./html/:/var/ipax/html/
       - ./lua/:/etc/ipax/lua/
       - ./templates:/var/ipax/templates/
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost/ipax/health"]
+        interval: 10s
+        timeout: 1s
+        retries: 5
+        start_period: 5s
     depends_on:
       idp:
         condition: service_healthy
+  
   mailcatcher:
     container_name: mailcatcher
     image: ghcr.io/identicum/mailcatcher:latest
