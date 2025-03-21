@@ -28,7 +28,7 @@ docker run  -d \
     -e OIDC_POST_LOGOUT_REDIRECT_URI="https://myapp.identicum.com/logoutSuccess.html" \
     -e OIDC_ACR_VALUES="loa-3" \
     -v $(pwd)/conf.d/:/etc/ipax/conf.d/:ro \
-    identicum/ipax:latest
+    ghcr.io/identicum/ipax:latest
 ```
 
 > To use PKCE, remove `OIDC_CLIENT_SECRET` and add `OIDC_USE_PKCE` with value "true"
