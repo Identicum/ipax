@@ -234,14 +234,15 @@ function _M.get_preferred_name_from_userinfo()
 end
 
 function _M.get_preferred_username_from_userinfo_or_idtoken()
-    local id_token = _M.get_id_token() 
-    local preferred_username = id_token.preferred_username
+    local userinfo_preferred_username = _M.get_preferred_name_from_userinfo()
 
-	if preferred_username == nil then
-		return _M.get_preferred_name_from_userinfo()
+	if userinfo_preferred_username == nil then
+		local id_token = _M.get_id_token() 
+    	return id_token.preferred_username
     else
-		return preferred_username
+		return userinfo_preferred_username
     end
+
 end
 
 function _M.get_id_token()
@@ -256,7 +257,8 @@ end
 
 function _M.get_refresh_token()
 	local res = _M.get_res()
-	return res.refresh_token
+	local refresh_token = res.refresh_token or nil
+	return refresh_token
 end
 
 function _M.get_res()
