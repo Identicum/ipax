@@ -1,7 +1,7 @@
 services:
   idp:
     container_name: idp
-    image: ghcr.io/identicum/keycloak:25.0
+    image: ghcr.io/identicum/keycloak:26.2
     restart: always
     pull_policy: always
     ports:
