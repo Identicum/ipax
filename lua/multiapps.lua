@@ -14,12 +14,16 @@ local session_opts = {
 	}
 }
 
-function _M.get_res(oidc_opts, base_url)
+function _M.get_res(oidc_opts, base_url, prompt_override)
 	oidc_opts["renew_access_token_on_expiry"] = true
 	oidc_opts["session_contents"] = {id_token=true, enc_id_token=true, access_token=true, user=true}
 	oidc_opts["redirect_uri"] = base_url .. os.getenv("OIDC_REDIRECT_URI")
 	oidc_opts["logout_path"] = os.getenv("OIDC_LOGOUT_URI")
 	oidc_opts["post_logout_redirect_uri"] = base_url .. "/logoutSuccess.html"
+	ngx.log(ngx.DEBUG, "prompt_override: " .. prompt_override)
+	if prompt_override ~= '' then
+		oidc_opts["prompt"]=prompt_override
+	end
 	local res, err, target, session = require("resty.openidc").authenticate(oidc_opts, null, action, session_opts)
     --ngx.log(ngx.DEBUG, "refresh_token: " .. session:get("refresh_token"))
 	res["refresh_token"] = session:get("refresh_token")	
