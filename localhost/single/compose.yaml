@@ -7,8 +7,8 @@ services:
     ports:
       - 8080:8080
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
       KC_FEATURES: update-email
     volumes:
       - ./keycloak/:/opt/keycloak/data/import/
@@ -34,22 +34,10 @@ services:
       KC_UPDATE_EMAIL_ACTION: UPDATE_EMAIL
       KC_UPDATE_PASSWORD_ACTION: UPDATE_PASSWORD
     volumes:
-      - ./conf/health.conf:/usr/local/openresty/nginx/conf/health.conf
-      - ./conf/info.conf:/usr/local/openresty/nginx/conf/info.conf
-      - ./conf/lua.conf:/usr/local/openresty/nginx/conf/lua.conf
-      - ./conf/filter_cookie.conf:/usr/local/openresty/nginx/conf/filter_cookie.conf
-      - ./conf/nginx.conf.template:/usr/local/openresty/nginx/conf/nginx.conf.template
-      - ./conf/norobots.conf:/usr/local/openresty/nginx/conf/norobots.conf
-      - ./conf/server.conf:/usr/local/openresty/nginx/conf/server.conf
-      - ./html/:/var/ipax/html/
-      - ./lua/:/etc/ipax/lua/
-      - ./templates:/var/ipax/templates/
-    healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost/ipax/health"]
-        interval: 10s
-        timeout: 1s
-        retries: 5
-        start_period: 5s
+      - ../../conf/:/etc/ipax/conf/
+      - ../../html/:/var/ipax/html/
+      - ../../lua/:/etc/ipax/lua/
+      - ../../templates:/var/ipax/templates/
     depends_on:
       idp:
         condition: service_healthy

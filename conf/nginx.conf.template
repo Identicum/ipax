@@ -1,7 +1,7 @@
 env SESSION_SECRET;
-env SESSION_COOKIE_PERSISTENT;
-env SESSION_COOKIE_LIFETIME;
+env SESSION_COOKIE_REMEMBER;
 env SESSION_COOKIE_SAMESITE;
+env SESSION_IDLETIMEOUT;
 env OIDC_DISCOVERY;
 env OIDC_SSL_VERIFY;
 env OIDC_CLIENT_ID;
@@ -22,6 +22,7 @@ env KC_UPDATE_PASSWORD_LABEL;
 env KC_ENROL_BIOMETRICS_ACTION;
 env KC_ENROL_BIOMETRICS_LABEL;
 env IPAX_APP_NAME;
+env IPAX_BASEURL;
 env API_BASEURL;
 error_log stderr $NGINX_LOG_LEVEL;
 
@@ -43,9 +44,9 @@ http {
 	proxy_buffers 8 32k;
 	proxy_buffer_size 32k;
 
-	include lua.conf;
-	include filter_cookie.conf;
-	include server.conf;
+	include /etc/ipax/conf/lua.conf;
+	include /etc/ipax/conf/filter_cookie.conf;
+	include /etc/ipax/conf/server.conf;
 
-	include /etc/ipax/conf.d/*.conf;
+	include /etc/ipax/conf/multi-host/*.conf;
 }

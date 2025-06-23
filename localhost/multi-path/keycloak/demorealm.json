@@ -10,16 +10,36 @@
     "resetPasswordAllowed" : true,
     "clients" : [ 
         {
-            "name": "ipax",
-            "clientId": "ipax_client_id",
-            "secret": "ipax_client_secret",
+            "name": "demoapp1",
+            "clientId": "demoapp1_client_id",
+            "secret": "demoapp1_client_secret",
             "standardFlowEnabled": true,
             "implicitFlowEnabled": false,
             "directAccessGrantsEnabled": false,
             "serviceAccountsEnabled": false,
             "frontchannelLogout": true,
-            "rootUrl": "http://localhost",
-            "baseUrl": "http://localhost",
+            "rootUrl": "http://localhost/demoapp1",
+            "baseUrl": "/",
+            "redirectUris": [
+                "/private/redirect_uri",
+                "/private/info"
+            ],
+            "defaultClientScopes": [ ],
+            "optionalClientScopes": [ "profile", "email", "roles", "phone" ],
+            "attributes": {
+                "post.logout.redirect.uris": "/logoutSuccess.html"
+            }
+        },
+        {
+            "name": "demoapp2",
+            "clientId": "demoapp2_client_id",
+            "standardFlowEnabled": true,
+            "implicitFlowEnabled": false,
+            "directAccessGrantsEnabled": false,
+            "serviceAccountsEnabled": false,
+            "frontchannelLogout": true,
+            "rootUrl": "http://localhost/demoapp2",
+            "baseUrl": "/",
             "redirectUris": [
                 "/private/redirect_uri",
                 "/private/info"
