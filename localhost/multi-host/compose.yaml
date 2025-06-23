@@ -24,7 +24,7 @@ services:
       NGINX_LOG_LEVEL: debug
     volumes:
       - ../../conf/:/etc/ipax/conf/
-      - ./conf/:/etc/ipax/conf/multi-host/
+      - ./conf.d/:/etc/ipax/conf/multi/host/conf.d/
       - ../../html/:/var/ipax/html/
       - ../../lua/:/etc/ipax/lua/
       - ../../templates:/var/ipax/templates/

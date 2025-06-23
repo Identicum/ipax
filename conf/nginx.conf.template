@@ -48,5 +48,5 @@ http {
 	include /etc/ipax/conf/filter_cookie.conf;
 	include /etc/ipax/conf/server.conf;
 
-	include /etc/ipax/conf/multi-host/*.conf;
+	include /etc/ipax/conf/multi/host/conf.d/*.conf;
 }
