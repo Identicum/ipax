@@ -16,88 +16,38 @@ local function get_authorization_params(acr_values)
 	return authorization_params_table
 end
 
-local function get_oidc_opts(discovery, ssl_verify, client_id, use_pkce, client_secret, scope, redirect_uri, logout_path, post_logout_redirect_uri, acr_values, prompt_override)
+function _M.get_oidc_opts()
 	local oidc_opts = {
-		discovery = discovery,
-		ssl_verify = ssl_verify,
-		client_id = client_id,
-		use_pkce = is_true(use_pkce),
-		client_secret = client_secret,
-		scope = scope,
-		redirect_uri = redirect_uri,
-		logout_path = logout_path,
-		post_logout_redirect_uri = post_logout_redirect_uri,
-		authorization_params = get_authorization_params(acr_values),
+		discovery = ngx.var.oidc_discovery or os.getenv("OIDC_DISCOVERY"),
+		ssl_verify = os.getenv("OIDC_SSL_VERIFY"),
+		client_id = ngx.var.client_id or os.getenv("OIDC_CLIENT_ID"),
+		use_pkce = is_true(ngx.var.use_pkce or os.getenv("OIDC_USE_PKCE")),
+		client_secret = ngx.var.client_secret or os.getenv("OIDC_CLIENT_SECRET"),
+		scope = ngx.var.scope or os.getenv("OIDC_SCOPE"),
+		redirect_uri = ngx.var.demoapp_base_url .. os.getenv("OIDC_REDIRECT_URI"),
+		logout_path = ngx.var.demoapp_base_url .. os.getenv("OIDC_LOGOUT_URI"),
+		post_logout_redirect_uri = os.getenv("OIDC_POST_LOGOUT_REDIRECT_URI") or ngx.var.demoapp_base_url .. "/logoutSuccess.html",
+		authorization_params = get_authorization_params(ngx.var.acr_values or os.getenv("OIDC_ACR_VALUES")),
 		renew_access_token_on_expiry = true,
 		session_contents = {id_token=true, enc_id_token=true, access_token=true, user=true}
 	}
+	local prompt_override = ngx.var.oidc_prompt or ""
 	if prompt_override ~= '' then
 		oidc_opts["prompt"]=prompt_override
 	end
 	return oidc_opts
 end
 
-function _M.get_oidc_opts_single()
-	ngx.log(ngx.DEBUG, "Getting global oidc_opts (single configuration)")
-	local discovery = os.getenv("OIDC_DISCOVERY")
-	local ssl_verify = os.getenv("OIDC_SSL_VERIFY")
-	local client_id = os.getenv("OIDC_CLIENT_ID")
-	local use_pkce = os.getenv("OIDC_USE_PKCE")
-	local client_secret = os.getenv("OIDC_CLIENT_SECRET")
-	local scope = os.getenv("OIDC_SCOPE")
-	local redirect_uri = os.getenv("OIDC_REDIRECT_URI")
-	local logout_path = os.getenv("OIDC_LOGOUT_URI")
-	local post_logout_redirect_uri = os.getenv("OIDC_POST_LOGOUT_REDIRECT_URI")
-	local acr_values = os.getenv("OIDC_ACR_VALUES")
-	local prompt_override = os.getenv("OIDC_PROMPT")
-	local oidc_opts = get_oidc_opts(discovery, ssl_verify, client_id, use_pkce, client_secret, scope, redirect_uri, logout_path, post_logout_redirect_uri, acr_values, prompt_override)
-	return oidc_opts
-end
-
-function _M.get_oidc_opts_multi()
-	ngx.log(ngx.DEBUG, "Getting oidc_opts (multi configuration)")
-	local discovery = ngx.var.oidc_discovery
-	local ssl_verify = os.getenv("OIDC_SSL_VERIFY")
-	local client_id = ngx.var.client_id
-	local use_pkce = ngx.var.use_pkce or "false"
-	local client_secret = ngx.var.client_secret
-	local scope = ngx.var.scope or os.getenv("OIDC_SCOPE")
-	local redirect_uri = ngx.var.demoapp_base_url .. os.getenv("OIDC_REDIRECT_URI")
-	local logout_path = ngx.var.demoapp_base_url .. os.getenv("OIDC_LOGOUT_URI")
-	ngx.log(ngx.DEBUG, "logout_path: " .. logout_path)
-	local post_logout_redirect_uri = ngx.var.demoapp_base_url .. "/logoutSuccess.html"
-	local acr_values = ngx.var.acr_values or ""
-	local prompt_override = ngx.var.oidc_prompt or ""
-	local oidc_opts = get_oidc_opts(discovery, ssl_verify, client_id, use_pkce, client_secret, scope, redirect_uri, logout_path, post_logout_redirect_uri, acr_values, prompt_override)
-	return oidc_opts
-end
-
-local function get_session_opts(secret, cookie_samesite, idle_timeout)
+function _M.get_session_opts()
 	local session_opts = {
-		secret = secret,
+		secret = ngx.var.session_secret or os.getenv("SESSION_SECRET"),
 		cookie_http_only = true,
-		cookie_secure = true,
-		cookie_samesite = cookie_samesite,
-		idling_timeout = tonumber(idle_timeout),
+		cookie_secure = is_true(ngx.var.session_cookie_secure or os.getenv("SESSION_COOKIE_SECURE")),
+		cookie_samesite = ngx.var.session_cookie_samesite or os.getenv("SESSION_COOKIE_SAMESITE"),
+		idling_timeout = tonumber(ngx.var.session_idle_timeout or os.getenv("SESSION_IDLETIMEOUT")),
 		remember = true
 	}
 	return session_opts
-end
-
-function _M.get_session_opts_single()
-	ngx.log(ngx.DEBUG, "Getting global session_opts (single configuration)")
-	local secret = os.getenv("SESSION_SECRET")
-	local cookie_samesite = os.getenv("SESSION_COOKIE_SAMESITE")
-	local idle_timeout = os.getenv("SESSION_IDLETIMEOUT")
-	return get_session_opts(secret, cookie_samesite, idle_timeout)
-end
-
-function _M.get_session_opts_multi()
-	ngx.log(ngx.DEBUG, "Getting session_opts (multi configuration)")
-	local secret = ngx.var.session_secret or os.getenv("SESSION_SECRET")
-	local cookie_samesite = ngx.var.session_cookie_samesite or os.getenv("SESSION_COOKIE_SAMESITE")
-	local idle_timeout = ngx.var.session_idle_timeout or os.getenv("SESSION_IDLETIMEOUT")
-	return get_session_opts(secret, cookie_samesite, idle_timeout)
 end
 
 function _M.get_id_token(res)
@@ -156,7 +106,7 @@ function _M.get_res(oidc_opts, session_opts)
 		oidc_opts = _M.get_oidc_opts_single()
 	end
 	if not session_opts then
-		session_opts = _M.get_session_opts_single()
+		session_opts = _M.get_session_opts()
 	end
 	for k, v in pairs(oidc_opts) do
 		ngx.log(ngx.DEBUG, "Using oidc_opts[" .. k .. "] = " .. tostring(v))
