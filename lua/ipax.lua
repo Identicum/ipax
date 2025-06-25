@@ -45,7 +45,7 @@ function _M.get_session_opts()
 		cookie_secure = is_true(ngx.var.session_cookie_secure or os.getenv("SESSION_COOKIE_SECURE")),
 		cookie_samesite = ngx.var.session_cookie_samesite or os.getenv("SESSION_COOKIE_SAMESITE"),
 		idling_timeout = tonumber(ngx.var.session_idle_timeout or os.getenv("SESSION_IDLETIMEOUT")),
-		remember = true
+		remember = ngx.var.session_cookie_remember or os.getenv("SESSION_COOKIE_REMEMBER")
 	}
 	return session_opts
 end
