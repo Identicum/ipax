@@ -1,8 +1,3 @@
-env SESSION_SECRET;
-env SESSION_COOKIE_REMEMBER;
-env SESSION_COOKIE_SAMESITE;
-env SESSION_COOKIE_SECURE;
-env SESSION_IDLETIMEOUT;
 env OIDC_DISCOVERY;
 env OIDC_SSL_VERIFY;
 env OIDC_CLIENT_ID;
@@ -10,10 +5,20 @@ env OIDC_USE_PKCE;
 env OIDC_CLIENT_SECRET;
 env OIDC_SCOPE;
 env OIDC_REDIRECT_URI;
-env OIDC_LOGOUT_URI;
+env OIDC_LOGOUT_PATH;
 env OIDC_POST_LOGOUT_REDIRECT_URI;
 env OIDC_PROMPT;
 env OIDC_ACR_VALUES;
+env SESSION_COOKIE_NAME;
+env SESSION_COOKIE_SAMESITE;
+env SESSION_COOKIE_SECURE;
+env SESSION_IDLING_TIMEOUT;
+env SESSION_REMEMBER;
+env SESSION_REMEMBER_COOKIE_NAME;
+env SESSION_SECRET;
+env IPAX_DISPLAY_NAME;
+env IPAX_BASE_URL;
+env API_BASE_URL;
 env KC_DELETE_ACCOUNT_ACTION;
 env KC_DELETE_ACCOUNT_LABEL;
 env KC_UPDATE_EMAIL_ACTION;
@@ -22,9 +27,7 @@ env KC_UPDATE_PASSWORD_ACTION;
 env KC_UPDATE_PASSWORD_LABEL;
 env KC_ENROL_BIOMETRICS_ACTION;
 env KC_ENROL_BIOMETRICS_LABEL;
-env IPAX_APP_NAME;
-env IPAX_BASEURL;
-env API_BASEURL;
+
 error_log stderr $NGINX_LOG_LEVEL;
 
 events {
@@ -45,9 +48,14 @@ http {
 	proxy_buffers 8 32k;
 	proxy_buffer_size 32k;
 
-	include /etc/ipax/conf/lua.conf;
-	include /etc/ipax/conf/filter_cookie.conf;
-	include /etc/ipax/conf/server.conf;
+	lua_package_path '/var/ipax/lua/?.lua;;';
 
-	include /etc/ipax/conf/multi/host/conf.d/*.conf;
+	include /var/ipax/conf/lua_shared_dict/*.conf;
+
+	# bigger (chunked) cookie size to accomodate 'member_of' Claim
+	large_client_header_buffers 8 32k;
+
+	variables_hash_max_size 2048;
+
+	include /usr/local/openresty/nginx/conf/server.conf;
 }

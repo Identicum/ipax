@@ -18,7 +18,7 @@
             "directAccessGrantsEnabled": false,
             "serviceAccountsEnabled": false,
             "frontchannelLogout": true,
-            "rootUrl": "http://localhost/demoapp1",
+            "rootUrl": "http://demoapps/demoapp1",
             "baseUrl": "/",
             "redirectUris": [
                 "/private/redirect_uri",
@@ -38,7 +38,7 @@
             "directAccessGrantsEnabled": false,
             "serviceAccountsEnabled": false,
             "frontchannelLogout": true,
-            "rootUrl": "http://localhost/demoapp2",
+            "rootUrl": "http://demoapps/demoapp2",
             "baseUrl": "/",
             "redirectUris": [
                 "/private/redirect_uri",

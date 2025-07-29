@@ -27,7 +27,7 @@ docker run  -d \
     -e OIDC_SESSION_SECRET="some_uuid_secret" \
     -e OIDC_POST_LOGOUT_REDIRECT_URI="https://myapp.identicum.com/logoutSuccess.html" \
     -e OIDC_ACR_VALUES="loa-3" \
-    -v $(pwd)/conf.d/:/etc/ipax/conf.d/:ro \
+    -v $(pwd)/conf.d/:/var/ipax/conf/conf.d/:ro \
     ghcr.io/identicum/ipax:latest
 ```
 

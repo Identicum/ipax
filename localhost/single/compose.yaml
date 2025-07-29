@@ -1,3 +1,5 @@
+name: ipax-single
+
 services:
   idp:
     container_name: idp
@@ -16,7 +18,7 @@ services:
 
   ipax:
     container_name: ipax
-    image: ghcr.io/identicum/ipax:latest
+    image: ghcr.io/identicum/ipax:refactor
     restart: always
     ports:
       - 80:80
@@ -25,19 +27,22 @@ services:
       NGINX_LOG_LEVEL: debug
       OIDC_DISCOVERY: http://idp:8080/realms/demorealm/.well-known/openid-configuration
       OIDC_CLIENT_ID: ipax_client_id
-      OIDC_USE_PKCE: "false"
       OIDC_CLIENT_SECRET: ipax_client_secret
       OIDC_SCOPE: openid profile email roles phone
-      OIDC_POST_LOGOUT_REDIRECT_URI: http://localhost/logoutSuccess.html
-      IPAX_APP_NAME: IPAx single demoapp
+      OIDC_POST_LOGOUT_REDIRECT_URI: http://demoapp1/logoutSuccess.html
+      IPAX_DEMOAPP_NAME: demoapp1
+      IPAX_DISPLAY_NAME: IPAx single demoapp
+      IPAX_BASE_URL: http://demoapp1
+      IPAX_DEMOAPPS_MODE: single
       KC_DELETE_ACCOUNT_ACTION: delete_account
       KC_DELETE_ACCOUNT_LABEL: Delete user
       KC_UPDATE_EMAIL_ACTION: UPDATE_EMAIL
       KC_UPDATE_PASSWORD_ACTION: UPDATE_PASSWORD
     volumes:
-      - ../../conf/:/etc/ipax/conf/
+      - ../../entrypoint.sh:/entrypoint.sh
+      - ../../conf/:/var/ipax/conf/
       - ../../html/:/var/ipax/html/
-      - ../../lua/:/etc/ipax/lua/
+      - ../../lua/:/var/ipax/lua/
       - ../../templates:/var/ipax/templates/
     depends_on:
       idp:

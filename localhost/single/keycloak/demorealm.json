@@ -18,7 +18,7 @@
             "directAccessGrantsEnabled": false,
             "serviceAccountsEnabled": false,
             "frontchannelLogout": true,
-            "rootUrl": "http://localhost",
+            "rootUrl": "http://demoapp1",
             "baseUrl": "/",
             "redirectUris": [
                 "/private/redirect_uri",

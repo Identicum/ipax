@@ -8,30 +8,67 @@ local function is_true(input)
 	end 
 end
 
-local function get_authorization_params(acr_values)
+local function get_authorization_params(oidc_acr_values)
+	ngx.log(ngx.DEBUG, "Starting")
 	local authorization_params_table = {}
-	if acr_values ~= '' then
-		authorization_params_table["acr_values"]=acr_values
+	if oidc_acr_values ~= '' then
+		authorization_params_table["acr_values"]=oidc_acr_values
 	end
 	return authorization_params_table
 end
 
+function _M.get_var_or_env(ngx_var_key)
+    local env_var_name = string.upper(ngx_var_key)
+    if ngx.var[ngx_var_key] and ngx.var[ngx_var_key] ~= "" then
+        return ngx.var[ngx_var_key]
+    else
+        return os.getenv(env_var_name)
+    end
+end
+
 function _M.get_oidc_opts()
+	ngx.log(ngx.DEBUG, "Starting")
+	local ipax_base_url = _M.get_var_or_env("ipax_base_url")
+
+	local oidc_redirect_uri
+	if ngx.var.oidc_redirect_uri and ngx.var.oidc_redirect_uri ~= "" then
+		oidc_redirect_uri = ngx.var.oidc_redirect_uri
+	else
+		oidc_redirect_uri = ipax_base_url .. os.getenv("OIDC_REDIRECT_URI")
+	end
+
+	local oidc_post_logout_redirect_uri
+	if ngx.var.oidc_post_logout_redirect_uri and ngx.var.oidc_post_logout_redirect_uri ~= "" then
+		oidc_post_logout_redirect_uri = ngx.var.oidc_post_logout_redirect_uri
+	else
+		oidc_post_logout_redirect_uri = ipax_base_url .. os.getenv("OIDC_POST_LOGOUT_REDIRECT_URI")
+	end
+
 	local oidc_opts = {
-		discovery = ngx.var.oidc_discovery or os.getenv("OIDC_DISCOVERY"),
-		ssl_verify = os.getenv("OIDC_SSL_VERIFY"),
-		client_id = ngx.var.client_id or os.getenv("OIDC_CLIENT_ID"),
-		use_pkce = is_true(ngx.var.use_pkce or os.getenv("OIDC_USE_PKCE")),
-		client_secret = ngx.var.client_secret or os.getenv("OIDC_CLIENT_SECRET"),
-		scope = ngx.var.scope or os.getenv("OIDC_SCOPE"),
-		redirect_uri = ngx.var.demoapp_base_url .. os.getenv("OIDC_REDIRECT_URI"),
-		logout_path = ngx.var.demoapp_base_url .. os.getenv("OIDC_LOGOUT_URI"),
-		post_logout_redirect_uri = os.getenv("OIDC_POST_LOGOUT_REDIRECT_URI") or ngx.var.demoapp_base_url .. "/logoutSuccess.html",
-		authorization_params = get_authorization_params(ngx.var.acr_values or os.getenv("OIDC_ACR_VALUES")),
+		discovery = _M.get_var_or_env("oidc_discovery"),
+		ssl_verify = _M.get_var_or_env("oidc_ssl_verify"),
+		client_id = _M.get_var_or_env("oidc_client_id"),
+		use_pkce = is_true(_M.get_var_or_env("oidc_use_pkce")),
+		scope = _M.get_var_or_env("oidc_scope"),
+		redirect_uri = oidc_redirect_uri,
+		logout_path = _M.get_var_or_env("oidc_logout_path"),
+		post_logout_redirect_uri = oidc_post_logout_redirect_uri,
+		authorization_params = get_authorization_params(_M.get_var_or_env("oidc_acr_values")),
 		renew_access_token_on_expiry = true,
-		session_contents = {id_token=true, enc_id_token=true, access_token=true, user=true}
+		session_contents = {id_token=true, enc_id_token=true, access_token=true, user=true},
+        -- Custom shared dictionaries per instance
+		jwks_uri_lua_shared_dict = _M.get_var_or_env("ipax_demoapp_name") .. "_jwks",
+		discovery_lua_shared_dict = _M.get_var_or_env("ipax_demoapp_name") .. "_discovery",
+		state_lua_shared_dict = _M.get_var_or_env("ipax_demoapp_name") .. "_oidc_state",
+		access_tokens_lua_shared_dict = _M.get_var_or_env("ipax_demoapp_name") .. "_oidc_access_tokens",
+		refresh_tokens_lua_shared_dict = _M.get_var_or_env("ipax_demoapp_name") .. "_oidc_refresh_tokens",
+		id_tokens_lua_shared_dict = _M.get_var_or_env("ipax_demoapp_name") .. "_oidc_id_tokens"
 	}
-	local prompt_override = ngx.var.oidc_prompt or ""
+	local oidc_client_secret = _M.get_var_or_env("oidc_client_secret")
+	if oidc_client_secret ~= '' then
+		oidc_opts["client_secret"]=oidc_client_secret
+	end
+	local prompt_override = _M.get_var_or_env("oidc_prompt")
 	if prompt_override ~= '' then
 		oidc_opts["prompt"]=prompt_override
 	end
@@ -39,59 +76,61 @@ function _M.get_oidc_opts()
 end
 
 function _M.get_session_opts()
+	ngx.log(ngx.DEBUG, "Starting")
 	local session_opts = {
-		secret = ngx.var.session_secret or os.getenv("SESSION_SECRET"),
-		cookie_http_only = true,
-		cookie_secure = is_true(ngx.var.session_cookie_secure or os.getenv("SESSION_COOKIE_SECURE")),
-		cookie_samesite = ngx.var.session_cookie_samesite or os.getenv("SESSION_COOKIE_SAMESITE"),
-		idling_timeout = tonumber(ngx.var.session_idle_timeout or os.getenv("SESSION_IDLETIMEOUT")),
-		remember = ngx.var.session_cookie_remember or os.getenv("SESSION_COOKIE_REMEMBER")
+		cookie_name = _M.get_var_or_env("session_cookie_name"),
+		cookie_samesite = _M.get_var_or_env("session_cookie_samesite"),
+		cookie_secure = is_true(_M.get_var_or_env("session_cookie_secure")),
+		idling_timeout = tonumber(_M.get_var_or_env("session_idling_timeout")),
+		remember = _M.get_var_or_env("session_remember"),
+		remember_cookie_name = _M.get_var_or_env("session_remember_cookie_name"),
+		secret = _M.get_var_or_env("ipax_base_url") .. _M.get_var_or_env("session_secret"),
+		cookie_http_only = true
 	}
 	return session_opts
 end
 
 function _M.get_id_token(res)
-	ngx.log(ngx.DEBUG, "ipax.get_id_token()")
+	ngx.log(ngx.DEBUG, "Starting")
 	return res.id_token
 end
 
 function _M.get_access_token(res)
-	ngx.log(ngx.DEBUG, "ipax.get_access_token()")
+	ngx.log(ngx.DEBUG, "Starting")
 	return res.access_token
 end
 
 local function get_refresh_token(res)
-	ngx.log(ngx.DEBUG, "ipax.get_refresh_token()")
+	ngx.log(ngx.DEBUG, "Starting")
 	local refresh_token = res.refresh_token or nil
 	return refresh_token
 end
 
-function _M.get_user()
-	ngx.log(ngx.DEBUG, "ipax.get_user()")
-	local res = _M.get_res()
-	return res.user
+function _M.get_user(res)
+	ngx.log(ngx.DEBUG, "Starting")
+	local user = res.user or nil
+	return user
 end
 
-function _M.get_userinfo_json()
-	ngx.log(ngx.DEBUG, "ipax.get_userinfo_json()")
-	local res = _M.get_res()
+function _M.get_userinfo_json(res)
+	ngx.log(ngx.DEBUG, "Starting")
 	local json = require("json").encode(res.user)
 	ngx.log(ngx.DEBUG, "userinfo_json: " .. json)
 	return json
 end
 
-local function get_preferred_name_from_userinfo()
-	ngx.log(ngx.DEBUG, "ipax.get_preferred_name_from_userinfo()")
-    local userinfo_json = _M.get_userinfo_json()
+local function get_preferred_name_from_userinfo(res)
+	ngx.log(ngx.DEBUG, "Starting")
+    local userinfo_json = _M.get_userinfo_json(res)
     local userinfo_table = require("json").decode(userinfo_json)
     local preferred_username = userinfo_table.preferred_username or "nil"
     ngx.log(ngx.DEBUG, "returning preferred_username: " .. preferred_username)
     return preferred_username
 end
 
-local function get_preferred_username_from_userinfo_or_idtoken()
-	ngx.log(ngx.DEBUG, "ipax.get_preferred_username_from_userinfo_or_idtoken()")
-    local userinfo_preferred_username = get_preferred_name_from_userinfo()
+local function get_preferred_username_from_userinfo_or_idtoken(res)
+	ngx.log(ngx.DEBUG, "Starting")
+    local userinfo_preferred_username = get_preferred_name_from_userinfo(res)
 	if userinfo_preferred_username == nil then
 		local id_token = _M.get_id_token() 
     	return id_token.preferred_username
@@ -101,13 +140,7 @@ local function get_preferred_username_from_userinfo_or_idtoken()
 end
 
 function _M.get_res(oidc_opts, session_opts)
-	ngx.log(ngx.DEBUG, "ipax.get_res()")
-	if not oidc_opts then
-		oidc_opts = _M.get_oidc_opts_single()
-	end
-	if not session_opts then
-		session_opts = _M.get_session_opts()
-	end
+	ngx.log(ngx.DEBUG, "Starting for client_id: " .. oidc_opts.client_id)
 	for k, v in pairs(oidc_opts) do
 		ngx.log(ngx.DEBUG, "Using oidc_opts[" .. k .. "] = " .. tostring(v))
 	end
@@ -122,8 +155,9 @@ function _M.get_res(oidc_opts, session_opts)
 	return res
 end
 
-local function get_kc_user_action_url(base_url, client_id, kc_action, authorization_endpoint)
-	local redirect_uri = base_url .. "/private/info"
+local function get_kc_user_action_url(ipax_base_url, client_id, kc_action, authorization_endpoint)
+	ngx.log(ngx.DEBUG, "Starting for client_id: " .. client_id)
+	local redirect_uri = ipax_base_url .. "/private/info"
 	local params = {
 		client_id = client_id,
 		response_type = "code",
@@ -135,7 +169,8 @@ local function get_kc_user_action_url(base_url, client_id, kc_action, authorizat
 end
 
 local function get_discovery_document(oidc_opts)
-	ngx.log(ngx.DEBUG, "ipax.get_discovery_document()")
+	ngx.log(ngx.DEBUG, "Starting for discovery: " .. oidc_opts.discovery)
+	local http = require("resty.http")
 	local http = require("resty.http")
 	local httpc = http.new()
 	local res, err = httpc:request_uri(oidc_opts.discovery, { method = "GET", oidc_opts.ssl_verify })
@@ -150,37 +185,38 @@ local function get_discovery_document(oidc_opts)
 	return require("cjson").decode(res.body)
 end
 
-local function get_user_actions(oidc_opts, base_url)
+local function get_user_actions(oidc_opts, ipax_base_url)
+	ngx.log(ngx.DEBUG, "Starting for client_id: " .. oidc_opts.client_id)
 	local userActionsTable = {}
 	local discovery_document = get_discovery_document(oidc_opts)
 	local authorization_endpoint = discovery_document.authorization_endpoint
 	local client_id = oidc_opts.client_id
 
-	local kc_delete_account_action = os.getenv("KC_DELETE_ACCOUNT_ACTION")
+	local kc_delete_account_action = _M.get_var_or_env("kc_delete_account_action")
 	if kc_delete_account_action ~= '' then
-		userActionsTable["kc_delete_account_action"]='<a id="delete-account-button" href="' .. get_kc_user_action_url(base_url, client_id, kc_delete_account_action, authorization_endpoint) .. '">' .. os.getenv("KC_DELETE_ACCOUNT_LABEL") .. '</a>'
+		userActionsTable["kc_delete_account_action"]='<a id="delete-account-button" href="' .. get_kc_user_action_url(ipax_base_url, client_id, kc_delete_account_action, authorization_endpoint) .. '">' .. _M.get_var_or_env("kc_delete_account_label") .. '</a>'
 	end
 
-	local kc_update_password_action = os.getenv("KC_UPDATE_PASSWORD_ACTION")
+	local kc_update_password_action = _M.get_var_or_env("kc_update_password_action")
 	if kc_update_password_action ~= '' then
-		userActionsTable["kc_update_password_action"]='<a id="update-password-button" href="' .. get_kc_user_action_url(base_url, client_id, kc_update_password_action, authorization_endpoint) .. '">' .. os.getenv("KC_UPDATE_PASSWORD_LABEL") .. '</a>'
+		userActionsTable["kc_update_password_action"]='<a id="update-password-button" href="' .. get_kc_user_action_url(ipax_base_url, client_id, kc_update_password_action, authorization_endpoint) .. '">' .. _M.get_var_or_env("kc_update_password_label") .. '</a>'
 	end
 
-	local kc_update_email_action = os.getenv("KC_UPDATE_EMAIL_ACTION")
+	local kc_update_email_action = _M.get_var_or_env("kc_update_email_action")
 	if kc_update_email_action ~= '' then
-		userActionsTable["kc_update_email_action"]='<a id="update-email-button" href="' .. get_kc_user_action_url(base_url, client_id, kc_update_email_action, authorization_endpoint) .. '">' .. os.getenv("KC_UPDATE_EMAIL_LABEL") .. '</a>'
+		userActionsTable["kc_update_email_action"]='<a id="update-email-button" href="' .. get_kc_user_action_url(ipax_base_url, client_id, kc_update_email_action, authorization_endpoint) .. '">' .. _M.get_var_or_env("kc_update_email_label") .. '</a>'
 	end
 
-	local kc_enrol_biometrics_action = os.getenv("KC_ENROL_BIOMETRICS_ACTION")
+	local kc_enrol_biometrics_action = _M.get_var_or_env("kc_enrol_biometrics_action")
 	if kc_enrol_biometrics_action ~= '' then
-		userActionsTable["kc_enrol_biometrics_action"]='<a id="enrol-biometrics-button" href="' .. get_kc_user_action_url(base_url, client_id, kc_enrol_biometrics_action, authorization_endpoint) .. '">' .. os.getenv("KC_ENROL_BIOMETRICS_LABEL") .. '</a>'
+		userActionsTable["kc_enrol_biometrics_action"]='<a id="enrol-biometrics-button" href="' .. get_kc_user_action_url(ipax_base_url, client_id, kc_enrol_biometrics_action, authorization_endpoint) .. '">' .. _M.get_var_or_env("kc_enrol_biometrics_label") .. '</a>'
 	end
 
 	return userActionsTable
 end
 
-function _M.get_info_data(oidc_opts, session_opts, app_name, base_url, logout_uri, headers)
-	ngx.log(ngx.DEBUG, "ipax.get_info_data()")
+function _M.get_info_data(oidc_opts, session_opts, ipax_display_name, ipax_demoapp_name, ipax_base_url, headers)
+	ngx.log(ngx.DEBUG, "Starting for client_id: " .. oidc_opts.client_id)
 	local res = _M.get_res(oidc_opts, session_opts) 
 	-- id_token is returned as a lua table
 	local id_token = _M.get_id_token(res);
@@ -198,9 +234,10 @@ function _M.get_info_data(oidc_opts, session_opts, app_name, base_url, logout_ur
 		id_token = id_token,
 		userinfo_json = _M.get_userinfo_json(res),
 		username = get_preferred_username_from_userinfo_or_idtoken(res) or "Not Informed",
-		user_actions = get_user_actions(oidc_opts, base_url),
-		logout_uri = logout_uri,
-		app_name = app_name
+		user_actions = get_user_actions(oidc_opts, ipax_base_url),
+		logout_path = oidc_opts.logout_path,
+		ipax_demoapp_name = ipax_demoapp_name,
+		ipax_display_name = ipax_display_name
 	}
 	return data
 end

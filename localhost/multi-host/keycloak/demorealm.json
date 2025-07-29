@@ -33,6 +33,7 @@
         {
             "name": "demoapp2",
             "clientId": "demoapp2_client_id",
+            "publicClient": true,
             "standardFlowEnabled": true,
             "implicitFlowEnabled": false,
             "directAccessGrantsEnabled": false,

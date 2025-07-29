@@ -6,29 +6,36 @@ RUN luarocks install lua-resty-jwt 0.2.3
 RUN luarocks install lua-resty-openidc 1.8.0
 RUN luarocks install lua-resty-template 2.0
 
-COPY conf/ /usr/local/openresty/nginx/conf/
-COPY lua/ /etc/ipax/lua/
+COPY conf /var/ipax/conf/
+COPY lua /var/ipax/lua/
 COPY html /var/ipax/html
 COPY templates /var/ipax/templates
 
 ENV NGINX_LOG_LEVEL=warn \
     NGINX_RESOLVER=8.8.8.8 \
-    SESSION_SECRET="ipax_default_secret" \
-    SESSION_COOKIE_REMEMBER="true" \
-    SESSION_COOKIE_SAMESITE="Lax" \
-    SESSION_COOKIE_SECURE="false" \
-    SESSION_IDLETIMEOUT="86400" \
     OIDC_DISCOVERY="" \
     OIDC_SSL_VERIFY="yes" \
     OIDC_CLIENT_ID="" \
-    OIDC_USE_PKCE=false \
+    OIDC_USE_PKCE="false" \
     OIDC_CLIENT_SECRET="" \
     OIDC_SCOPE="openid profile" \
     OIDC_REDIRECT_URI="/private/redirect_uri" \
-    OIDC_LOGOUT_URI="/private/logout" \
-    OIDC_POST_LOGOUT_REDIRECT_URI="/auth" \
+    OIDC_LOGOUT_PATH="/private/logout" \
+    OIDC_POST_LOGOUT_REDIRECT_URI="/logoutSuccess.html" \
     OIDC_PROMPT="" \
     OIDC_ACR_VALUES="" \
+    SESSION_COOKIE_NAME="session" \
+    SESSION_COOKIE_SAMESITE="Lax" \
+    SESSION_COOKIE_SECURE="false" \
+    SESSION_IDLING_TIMEOUT="86400" \
+    SESSION_REMEMBER="false" \
+    SESSION_REMEMBER_COOKIE_NAME="remember" \
+    SESSION_SECRET="ipax_default_secret" \
+    IPAX_DEMOAPP_NAME="ipax" \
+    IPAX_DISPLAY_NAME="IPAx" \
+    IPAX_BASE_URL="http://localhost" \
+    IPAX_DEMOAPPS_MODE="" \
+    API_BASE_URL="" \
     KC_DELETE_ACCOUNT_ACTION="" \
     KC_DELETE_ACCOUNT_LABEL="Delete account" \
     KC_UPDATE_EMAIL_ACTION="" \
@@ -37,12 +44,14 @@ ENV NGINX_LOG_LEVEL=warn \
     KC_UPDATE_PASSWORD_LABEL="Update password" \
     KC_ENROL_BIOMETRICS_ACTION="" \
     KC_ENROL_BIOMETRICS_LABEL="Enrol biometrics" \
-    IPAX_APP_NAME="IPAx" \
-    IPAX_BASEURL="http://localhost" \
-    API_BASEURL=""
+    LUA_SHARED_DICT_PATH="/var/ipax/conf/lua_shared_dict" \
+    DEMOAPPS_VARIABLES_CONFIG_PATH="/var/ipax/conf/demoapps" \
+    DEMOAPPS_MULTI_PATH_CONFIG_PATH="/var/ipax/conf/location_conf.d"
 
 WORKDIR /usr/local/openresty/nginx
 
-HEALTHCHECK --interval=30s --timeout=1s --start-period=5s --retries=3 CMD [ "curl", "-f", "http://localhost/ipax/health" ]
+# HEALTHCHECK --interval=60s --timeout=1s --start-period=5s --retries=3 CMD [ "curl", "-f", "http://localhost/ipax/health" ]
 
-CMD ["sh", "-c", "envsubst < /etc/ipax/conf/nginx.conf.template > conf/nginx.conf && /usr/local/openresty/bin/openresty -g 'daemon off;'"]
+CMD [ ]
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]

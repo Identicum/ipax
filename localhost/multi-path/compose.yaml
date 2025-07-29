@@ -1,3 +1,5 @@
+name: ipax-multi-path
+
 services:
   idp:
     container_name: idp
@@ -15,18 +17,20 @@ services:
     command: "start-dev --import-realm"
   demoapps:
     container_name: demoapps
-    image: ghcr.io/identicum/ipax:latest
+    image: ghcr.io/identicum/ipax:refactor
     restart: always
     ports:
       - 80:80
     environment:
       NGINX_RESOLVER: 127.0.0.11 valid=5s
       NGINX_LOG_LEVEL: debug
+      IPAX_DEMOAPPS_MODE: multi_path
     volumes:
-      - ../../conf/:/etc/ipax/conf/
-      - ./conf.d/:/etc/ipax/conf/multi/path/conf.d/
+      - ../../entrypoint.sh:/entrypoint.sh
+      - ../../conf/:/var/ipax/conf/
+      - ./demoapps/:/var/ipax/conf/demoapps/
       - ../../html/:/var/ipax/html/
-      - ../../lua/:/etc/ipax/lua/
+      - ../../lua/:/var/ipax/lua/
       - ../../templates:/var/ipax/templates/
     depends_on:
       idp:
@@ -34,6 +38,7 @@ services:
   mailcatcher:
     container_name: mailcatcher
     image: ghcr.io/identicum/mailcatcher:latest
+    pull_policy: always
     restart: always
     ports:
       - 1080:1080
