@@ -1,4 +1,4 @@
-name: ipax-multi-path
+name: ipax-demoapps
 
 services:
   idp:
@@ -24,11 +24,11 @@ services:
     environment:
       NGINX_RESOLVER: 127.0.0.11 valid=5s
       NGINX_LOG_LEVEL: debug
-      IPAX_MODE: multi_path
+      IPAX_MODE: demoapps
     volumes:
       - ../../entrypoint.sh:/entrypoint.sh
       - ../../conf/:/var/ipax/conf/
-      - ./demoapps/:/var/ipax/conf/demoapps/
+      - ./conf/:/var/ipax/conf/demoapps/
       - ../../html/:/var/ipax/html/
       - ../../lua/:/var/ipax/lua/
       - ../../templates:/var/ipax/templates/
