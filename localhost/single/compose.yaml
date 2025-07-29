@@ -33,7 +33,7 @@ services:
       IPAX_DEMOAPP_NAME: demoapp1
       IPAX_DISPLAY_NAME: IPAx single demoapp
       IPAX_BASE_URL: http://demoapp1
-      IPAX_DEMOAPPS_MODE: single
+      IPAX_MODE: single
       KC_DELETE_ACCOUNT_ACTION: delete_account
       KC_DELETE_ACCOUNT_LABEL: Delete user
       KC_UPDATE_EMAIL_ACTION: UPDATE_EMAIL

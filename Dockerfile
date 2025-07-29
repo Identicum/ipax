@@ -34,7 +34,7 @@ ENV NGINX_LOG_LEVEL=warn \
     IPAX_DEMOAPP_NAME="ipax" \
     IPAX_DISPLAY_NAME="IPAx" \
     IPAX_BASE_URL="http://localhost" \
-    IPAX_DEMOAPPS_MODE="" \
+    IPAX_MODE="" \
     API_BASE_URL="" \
     KC_DELETE_ACCOUNT_ACTION="" \
     KC_DELETE_ACCOUNT_LABEL="Delete account" \
@@ -46,7 +46,7 @@ ENV NGINX_LOG_LEVEL=warn \
     KC_ENROL_BIOMETRICS_LABEL="Enrol biometrics" \
     LUA_SHARED_DICT_PATH="/var/ipax/conf/lua_shared_dict" \
     DEMOAPPS_VARIABLES_CONFIG_PATH="/var/ipax/conf/demoapps" \
-    DEMOAPPS_MULTI_PATH_CONFIG_PATH="/var/ipax/conf/location_conf.d"
+    DEMOAPPS_CONFIG_PATH="/var/ipax/conf/location_conf.d"
 
 WORKDIR /usr/local/openresty/nginx
 

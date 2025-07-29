@@ -1,4 +1,4 @@
-name: ipax-multi-host
+name: ipax-multi-path
 
 services:
   idp:
@@ -24,7 +24,7 @@ services:
     environment:
       NGINX_RESOLVER: 127.0.0.11 valid=5s
       NGINX_LOG_LEVEL: debug
-      IPAX_DEMOAPPS_MODE: multi_host
+      IPAX_MODE: multi_path
     volumes:
       - ../../entrypoint.sh:/entrypoint.sh
       - ../../conf/:/var/ipax/conf/
@@ -38,6 +38,7 @@ services:
   mailcatcher:
     container_name: mailcatcher
     image: ghcr.io/identicum/mailcatcher:latest
+    pull_policy: always
     restart: always
     ports:
       - 1080:1080
