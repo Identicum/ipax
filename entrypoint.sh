@@ -50,13 +50,13 @@ envsubst < ${NGINX_CONF_TEMPLATE} > ${NGINX_CONF}
 echo "IPAX_MODE: '${IPAX_MODE}'"
 if [ "$IPAX_MODE" = "proxy" ]; then
     delete_lua_shared_dict
-    create_lua_shared_dict_file "${IPAX_DEMOAPP_NAME}"
+    create_lua_shared_dict_file "${IPAX_APP_NAME}"
 fi
 
 if [ "$IPAX_MODE" = "single" ]; then
     cp /var/ipax/conf/server/demoapp.conf /usr/local/openresty/nginx/conf/server.conf
     delete_lua_shared_dict
-    create_lua_shared_dict_file "${IPAX_DEMOAPP_NAME}"
+    create_lua_shared_dict_file "${IPAX_APP_NAME}"
 fi
 
 if [ "$IPAX_MODE" = "demoapps" ]; then

@@ -57,12 +57,12 @@ function _M.get_oidc_opts()
 		renew_access_token_on_expiry = true,
 		session_contents = {id_token=true, enc_id_token=true, access_token=true, user=true},
         -- Custom shared dictionaries per instance
-		jwks_uri_lua_shared_dict = _M.get_var_or_env("ipax_demoapp_name") .. "_jwks",
-		discovery_lua_shared_dict = _M.get_var_or_env("ipax_demoapp_name") .. "_discovery",
-		state_lua_shared_dict = _M.get_var_or_env("ipax_demoapp_name") .. "_oidc_state",
-		access_tokens_lua_shared_dict = _M.get_var_or_env("ipax_demoapp_name") .. "_oidc_access_tokens",
-		refresh_tokens_lua_shared_dict = _M.get_var_or_env("ipax_demoapp_name") .. "_oidc_refresh_tokens",
-		id_tokens_lua_shared_dict = _M.get_var_or_env("ipax_demoapp_name") .. "_oidc_id_tokens"
+		jwks_uri_lua_shared_dict = _M.get_var_or_env("ipax_app_name") .. "_jwks",
+		discovery_lua_shared_dict = _M.get_var_or_env("ipax_app_name") .. "_discovery",
+		state_lua_shared_dict = _M.get_var_or_env("ipax_app_name") .. "_oidc_state",
+		access_tokens_lua_shared_dict = _M.get_var_or_env("ipax_app_name") .. "_oidc_access_tokens",
+		refresh_tokens_lua_shared_dict = _M.get_var_or_env("ipax_app_name") .. "_oidc_refresh_tokens",
+		id_tokens_lua_shared_dict = _M.get_var_or_env("ipax_app_name") .. "_oidc_id_tokens"
 	}
 	local oidc_client_secret = _M.get_var_or_env("oidc_client_secret")
 	if oidc_client_secret ~= '' then
@@ -78,12 +78,12 @@ end
 function _M.get_session_opts()
 	ngx.log(ngx.DEBUG, "Starting")
 	local session_opts = {
-		cookie_name = _M.get_var_or_env("session_cookie_name"),
+		cookie_name = _M.get_var_or_env("ipax_app_name") .. "_session",
 		cookie_samesite = _M.get_var_or_env("session_cookie_samesite"),
 		cookie_secure = is_true(_M.get_var_or_env("session_cookie_secure")),
 		idling_timeout = tonumber(_M.get_var_or_env("session_idling_timeout")),
-		remember = _M.get_var_or_env("session_remember"),
-		remember_cookie_name = _M.get_var_or_env("session_remember_cookie_name"),
+		remember = is_true(_M.get_var_or_env("session_remember")),
+		remember_cookie_name = _M.get_var_or_env("ipax_app_name") .. "_remember",
 		secret = _M.get_var_or_env("ipax_base_url") .. _M.get_var_or_env("session_secret"),
 		cookie_http_only = true
 	}
@@ -215,7 +215,7 @@ local function get_user_actions(oidc_opts, ipax_base_url)
 	return userActionsTable
 end
 
-function _M.get_info_data(oidc_opts, session_opts, ipax_display_name, ipax_demoapp_name, ipax_base_url, headers)
+function _M.get_info_data(oidc_opts, session_opts, ipax_display_name, ipax_app_name, ipax_base_url, headers)
 	ngx.log(ngx.DEBUG, "Starting for client_id: " .. oidc_opts.client_id)
 	local res = _M.get_res(oidc_opts, session_opts) 
 	-- id_token is returned as a lua table
@@ -236,7 +236,7 @@ function _M.get_info_data(oidc_opts, session_opts, ipax_display_name, ipax_demoa
 		username = get_preferred_username_from_userinfo_or_idtoken(res) or "Not Informed",
 		user_actions = get_user_actions(oidc_opts, ipax_base_url),
 		logout_path = oidc_opts.logout_path,
-		ipax_demoapp_name = ipax_demoapp_name,
+		ipax_app_name = ipax_app_name,
 		ipax_display_name = ipax_display_name
 	}
 	return data
