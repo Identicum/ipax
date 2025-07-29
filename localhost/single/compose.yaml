@@ -29,7 +29,6 @@ services:
       OIDC_CLIENT_ID: ipax_client_id
       OIDC_CLIENT_SECRET: ipax_client_secret
       OIDC_SCOPE: openid profile email roles phone
-      IPAX_APP_NAME: demoapp1
       IPAX_DISPLAY_NAME: IPAx single demoapp
       IPAX_BASE_URL: http://demoapp1
       IPAX_MODE: single
