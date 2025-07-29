@@ -37,7 +37,7 @@ create_multi_config_file() {
     local demoapps_config_path="${DEMOAPPS_CONFIG_PATH}/${demoapp_name}.conf"
     echo "Creating ${demoapps_config_path}"
     cat /var/ipax/conf/demoapp_template.conf > ${demoapps_config_path}
-    sed -i "s#include /var/ipax/conf/default_variables.conf;#include /var/ipax/conf/default_variables.conf;\n		include ${DEMOAPPS_VARIABLES_CONFIG_PATH}/${demoapp_name}.conf;#g" ${multipath_config_path}
+    sed -i "s#include /var/ipax/conf/default_variables.conf;#include /var/ipax/conf/default_variables.conf;\n		include ${DEMOAPPS_VARIABLES_CONFIG_PATH}/${demoapp_name}.conf;#g" ${demoapps_config_path}
     sed -i "s#location /#location /${demoapp_name}/#g" ${demoapps_config_path}
     sed -i "s#root /var/ipax/html/#alias /var/ipax/html/#g" ${demoapps_config_path}
 }
