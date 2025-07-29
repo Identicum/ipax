@@ -79,7 +79,7 @@ function _M.get_session_opts()
 	ngx.log(ngx.DEBUG, "Starting")
 	local session_opts = {
 		cookie_name = _M.get_var_or_env("ipax_app_name") .. "_session",
-		cookie_samesite = _M.get_var_or_env("session_cookie_samesite"),
+		cookie_same_site = _M.get_var_or_env("session_cookie_same_site"),
 		cookie_secure = is_true(_M.get_var_or_env("session_cookie_secure")),
 		idling_timeout = tonumber(_M.get_var_or_env("session_idling_timeout")),
 		remember = is_true(_M.get_var_or_env("session_remember")),

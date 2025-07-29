@@ -15,7 +15,7 @@
 | OIDC_POST_LOGOUT_REDIRECT_URI | oidc_post_logout_redirect_uri | oidc_opts.post_logout_redirect_uri |                    |
 | OIDC_PROMPT                   | oidc_prompt                   | oidc_opts.prompt                   |                    |
 | OIDC_ACR_VALUES               | oidc_acr_values               | oidc_opts.authorization_params     |                    |
-| SESSION_COOKIE_SAMESITE       | session_cookie_samesite       | session_opts.cookie_samesite       |                    |
+| SESSION_COOKIE_SAME_SITE      | session_cookie_same_site      | session_opts.cookie_same_site      |                    |
 | SESSION_COOKIE_SECURE         | session_cookie_secure         | session_opts.cookie_secure         |                    |
 | SESSION_IDLING_TIMEOUT        | session_idling_timeout        | session_opts.idling_timeout        |                    |
 | SESSION_REMEMBER              | session_remember              | session_opts.remember              |                    |
