@@ -44,6 +44,11 @@ function _M.get_oidc_opts()
 		oidc_post_logout_redirect_uri = ipax_base_url .. os.getenv("OIDC_POST_LOGOUT_REDIRECT_URI")
 	end
 
+	local logout_path = _M.get_var_or_env("oidc_logout_path")
+	if os.getenv("IPAX_MODE")=='demoapps' then
+		logout_path = "/" .. _M.get_var_or_env("ipax_app_name") .. logout_path
+	end
+
 	local oidc_opts = {
 		discovery = _M.get_var_or_env("oidc_discovery"),
 		ssl_verify = _M.get_var_or_env("oidc_ssl_verify"),
@@ -51,7 +56,7 @@ function _M.get_oidc_opts()
 		use_pkce = is_true(_M.get_var_or_env("oidc_use_pkce")),
 		scope = _M.get_var_or_env("oidc_scope"),
 		redirect_uri = oidc_redirect_uri,
-		logout_path = _M.get_var_or_env("oidc_logout_path"),
+		logout_path = logout_path,
 		post_logout_redirect_uri = oidc_post_logout_redirect_uri,
 		authorization_params = get_authorization_params(_M.get_var_or_env("oidc_acr_values")),
 		renew_access_token_on_expiry = true,
