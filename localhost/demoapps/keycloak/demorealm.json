@@ -50,6 +50,27 @@
             "attributes": {
                 "post.logout.redirect.uris": "/logoutSuccess.html"
             }
+        },
+        {
+            "name": "demoapp3",
+            "clientId": "demoapp3_client_id",
+            "publicClient": true,
+            "standardFlowEnabled": true,
+            "implicitFlowEnabled": false,
+            "directAccessGrantsEnabled": false,
+            "serviceAccountsEnabled": false,
+            "frontchannelLogout": true,
+            "rootUrl": "http://demoapps/demoapp3",
+            "baseUrl": "/",
+            "redirectUris": [
+                "/private/redirect_uri",
+                "/private/info"
+            ],
+            "defaultClientScopes": [ ],
+            "optionalClientScopes": [ "profile", "email", "roles", "phone" ],
+            "attributes": {
+                "post.logout.redirect.uris": "/logoutSuccess.html"
+            }
         }
     ],
     "users" : [
