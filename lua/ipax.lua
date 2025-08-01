@@ -146,17 +146,24 @@ end
 
 function _M.get_res(oidc_opts, session_opts)
 	ngx.log(ngx.DEBUG, "Starting for client_id: " .. oidc_opts.client_id)
-	for k, v in pairs(oidc_opts) do
-		ngx.log(ngx.DEBUG, "Using oidc_opts[" .. k .. "] = " .. tostring(v))
-	end
-	for k, v in pairs(session_opts) do
-		ngx.log(ngx.DEBUG, "Using session_opts[" .. k .. "] = " .. tostring(v))
-	end
+	-- for k, v in pairs(oidc_opts) do
+	-- 	ngx.log(ngx.DEBUG, "Using oidc_opts[" .. k .. "] = " .. tostring(v))
+	-- end
+	-- for k, v in pairs(session_opts) do
+	-- 	ngx.log(ngx.DEBUG, "Using session_opts[" .. k .. "] = " .. tostring(v))
+	-- end
 	local res, err, target, session = require("resty.openidc").authenticate(oidc_opts, nil, nil, session_opts)
-    --ngx.log(ngx.DEBUG, "refresh_token: " .. session:get("refresh_token"))
+	if err then
+		if string.find(err, "error=login_required") then
+			ngx.redirect("../loginRequired.html", ngx.HTTP_MOVED_TEMPORARILY)
+		else
+			ngx.log(ngx.ERR, "Authentication failed: ", err)
+			ngx.redirect("../loginError.html", ngx.HTTP_MOVED_TEMPORARILY)
+		end
+	end
+
 	res["refresh_token"] = session:get("refresh_token")
 	session:close()
-	-- local authentication_feedback = _M.check_authentication(err)
 	return res
 end
 
