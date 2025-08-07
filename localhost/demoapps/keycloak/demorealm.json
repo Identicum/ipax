@@ -124,6 +124,15 @@
             "defaultAction": false,
             "priority": 61,
             "config": {}
+          },
+          {
+            "alias": "webauthn-register-passwordless",
+            "name": "Webauthn Register Passwordless",
+            "providerId": "webauthn-register-passwordless",
+            "enabled": true,
+            "defaultAction": false,
+            "priority": 62,
+            "config": {}
           }
     ],
     "smtpServer": {

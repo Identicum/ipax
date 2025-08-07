@@ -224,6 +224,11 @@ local function get_user_actions(oidc_opts, ipax_base_url)
 		userActionsTable["kc_enrol_biometrics_action"]='<a id="enrol-biometrics-button" href="' .. get_kc_user_action_url(ipax_base_url, client_id, kc_enrol_biometrics_action, authorization_endpoint) .. '">' .. _M.get_var_or_env("kc_enrol_biometrics_label") .. '</a>'
 	end
 
+	local kc_add_passkey_action = _M.get_var_or_env("kc_add_passkey_action")
+	if kc_add_passkey_action ~= '' then
+		userActionsTable["kc_add_passkey_action"]='<a id="add-passkey-button" href="' .. get_kc_user_action_url(ipax_base_url, client_id, kc_add_passkey_action, authorization_endpoint) .. '">' .. _M.get_var_or_env("kc_add_passkey_label") .. '</a>'
+	end
+
 	return userActionsTable
 end
 

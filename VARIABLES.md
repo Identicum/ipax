@@ -32,4 +32,5 @@
 | KC_UPDATE_PASSWORD_LABEL      |                               |                                    |                               |
 | KC_ENROL_BIOMETRICS_ACTION    |                               |                                    |                               |
 | KC_ENROL_BIOMETRICS_LABEL     |                               |                                    |                               |
-
+| KC_ADD_PASSKEY_ACTION         | kc_add_passkey_action         |                                    |                               |
+| KC_ADD_PASSKEY_LABEL          | kc_add_passkey_label          |                                    |                               |
