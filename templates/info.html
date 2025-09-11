@@ -85,6 +85,11 @@
                 --bs-nav-pills-link-active-bg: var(--main-color);
                 --bs-link-hover-color: var(--main-color);
             }
+            .hover-text:hover {
+                cursor: pointer; /* Cambia el icono del mouse a un click */
+                text-decoration: underline; /* Subraya el texto */
+                color: #8fdf6c;
+            }
         </style>
     </head>
     <body>
@@ -155,7 +160,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td style='word-break:break-word;white-space:pre-wrap;-moz-white-space:pre-wrap;'>{{access_token}}</td></tr>
+                                    <tr><td style='word-break:break-word;white-space:pre-wrap;-moz-white-space:pre-wrap;' onclick="copyTextToClipboard(this)" class="hover-text">{{access_token}}</td></tr>
                                     <tr id="accessTokenSecondRow"><td>View in <a href='https://jwt.io/#token={{access_token}}' target='_blank'>https://jwt.io/</a></td></tr>
                                 </tbody>
                             </table>
@@ -168,7 +173,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td style='word-break:break-word;white-space:pre-wrap;-moz-white-space:pre-wrap;'>{{refresh_token}}</td></tr>
+                                    <tr><td style='word-break:break-word;white-space:pre-wrap;-moz-white-space:pre-wrap;' onclick="copyTextToClipboard(this)" class="hover-text">{{refresh_token}}</td></tr>
                                     <tr id="refreshTokenSecondRow"><td>View in <a href='https://jwt.io/#token={{refresh_token}}' target='_blank'>https://jwt.io/</a></td></tr>
                                 </tbody>
                             </table>
@@ -243,6 +248,25 @@
 
             if (refreshToken === "Not Provided in token endpoint response") {
                 document.getElementById("refreshTokenSecondRow").style.display = "none";
+            }
+
+            function copyTextToClipboard(input) {
+                //* Solo funciona con HTTPS
+                // let copyText = input.textContent || input.innerText;
+                // navigator.clipboard.writeText(copyText)
+                
+                //* Para HTTP
+                let copyText = input.textContent || input.innerText;
+                let tempInput = document.createElement("textarea");
+                tempInput.value = copyText;
+                document.body.appendChild(tempInput);
+
+                // Seleccionar el texto dentro del campo temporal
+                tempInput.select();
+                // Ejecutar el comando de copiar
+                document.execCommand("copy");
+                // Remover el campo temporal
+                document.body.removeChild(tempInput);
             }
         </script>
     </body>
