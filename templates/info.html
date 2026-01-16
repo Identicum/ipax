@@ -146,8 +146,17 @@
                                 <tbody>
                                     {% -- print('Processing id_token claims') %}
                                     {% for k, v in pairs(id_token) do %}
-                                    {% -- print('Processing id_token claim: ' .. k .. ' = ' .. tostring(v)) %}
-                                        <tr><td>{{k}}</td><td class='bold'>{{tostring(v)}}</td></tr>
+                                        {% -- print('Processing id_token claim: ' .. k .. ' = ' .. tostring(v)) %}
+                                        <tr>
+                                            <td>{{k}}</td>
+                                            <td class='bold'>
+                                                {% if type(v) == "table" then %}
+                                                    {{ require("cjson").encode(v) }}
+                                                {% else %}
+                                                    {{ tostring(v) }}
+                                                {% end %}
+                                            </td>
+                                        </tr>
                                     {% end %}
                                 </tbody>
                                 </table>
