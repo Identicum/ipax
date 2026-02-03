@@ -3,7 +3,7 @@ name: ipax-demoapps
 services:
   idp:
     container_name: idp
-    image: ghcr.io/identicum/keycloak:26.2
+    image: ghcr.io/identicum/keycloak:26.3
     restart: always
     pull_policy: always
     ports:
@@ -17,7 +17,7 @@ services:
     command: "start-dev --import-realm"
   demoapps:
     container_name: demoapps
-    image: ghcr.io/identicum/ipax:refactor
+    image: ghcr.io/identicum/ipax:latest
     restart: always
     ports:
       - 80:80

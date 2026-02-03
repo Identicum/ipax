@@ -3,7 +3,7 @@ name: ipax-single
 services:
   idp:
     container_name: idp
-    image: ghcr.io/identicum/keycloak:26.2
+    image: ghcr.io/identicum/keycloak:26.3
     restart: always
     pull_policy: always
     ports:
@@ -18,7 +18,7 @@ services:
 
   ipax:
     container_name: ipax
-    image: ghcr.io/identicum/ipax:refactor
+    image: ghcr.io/identicum/ipax:latest
     restart: always
     ports:
       - 80:80
