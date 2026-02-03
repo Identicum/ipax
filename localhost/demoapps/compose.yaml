@@ -1,0 +1,44 @@
+name: ipax-demoapps
+
+services:
+  idp:
+    container_name: idp
+    image: ghcr.io/identicum/keycloak:26.2
+    restart: always
+    pull_policy: always
+    ports:
+      - 8080:8080
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_FEATURES: update-email
+    volumes:
+      - ./keycloak/:/opt/keycloak/data/import/
+    command: "start-dev --import-realm"
+  demoapps:
+    container_name: demoapps
+    image: ghcr.io/identicum/ipax:refactor
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      NGINX_RESOLVER: 127.0.0.11 valid=5s
+      NGINX_LOG_LEVEL: debug
+      IPAX_MODE: demoapps
+    volumes:
+      - ../../entrypoint.sh:/entrypoint.sh
+      - ../../conf/:/var/ipax/conf/
+      - ./conf/:/var/ipax/conf/demoapps/
+      - ../../html/:/var/ipax/html/
+      - ../../lua/:/var/ipax/lua/
+      - ../../templates:/var/ipax/templates/
+    depends_on:
+      idp:
+        condition: service_healthy
+  mailcatcher:
+    container_name: mailcatcher
+    image: ghcr.io/identicum/mailcatcher:latest
+    pull_policy: always
+    restart: always
+    ports:
+      - 1080:1080
