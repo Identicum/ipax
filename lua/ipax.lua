@@ -259,4 +259,48 @@ function _M.get_info_data(oidc_opts, session_opts, ipax_display_name, ipax_app_n
 	return data
 end
 
+function _M.is_value_in_list(value_list, check_item)
+	ngx.log(ngx.DEBUG, "Starting")
+	for index, value in pairs(value_list) do
+		if value == check_item then
+			return true
+		end
+	end
+	return false
+end
+
+function _M.check_multivalued_user_claim(claim_values, check_item)
+	ngx.log(ngx.DEBUG, "Starting")
+	if _M.is_value_in_list(claim_values, check_item) then
+		return true
+	end
+	ngx.log(ngx.WARN, "Access denied. User claim does not contain required value: " .. check_item)
+	ngx.exit(ngx.HTTP_FORBIDDEN)
+	return false
+end
+
+function _M.get_ldap_object_names_from_dns(object_dns)
+	ngx.log(ngx.DEBUG, "Starting")
+	local object_names={}
+	if object_dns == nil then
+		ngx.log(ngx.DEBUG, 'get_ldapget_ldap_object_names_from_dns_object_names_from_dns() object_dns is nil')
+		return object_names
+	end
+	for index, value in pairs(object_dns) do
+		local object_rdn = split(value, ",")[1]
+		local object_name = split(object_rdn, "=")[2]
+		object_names[index] = object_name
+	end
+	return object_names
+end
+
+function _M.get_ldap_object_names(claim_values, separator)
+	ngx.log(ngx.DEBUG, "Starting")
+	if separator == nil then
+		separator = "|"
+	end
+	local group_names = _M.get_ldap_object_names_from_dns(claim_values)
+	return table.concat(group_names, separator)
+end
+
 return _M
