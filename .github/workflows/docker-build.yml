@@ -13,8 +13,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Delete untagged images
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: ${{github.event.repository.name}} 
+          package-type: 'container'
+          delete-only-untagged-versions: 'true'
+          min-versions-to-keep: 20
+
   build-and-push:
     runs-on: ubuntu-latest
+    needs: cleanup
     steps:
     - uses: actions/checkout@v4
     - uses: docker/setup-qemu-action@v3
@@ -30,16 +44,3 @@ jobs:
         tags: ghcr.io/identicum/${{github.event.repository.name}}:latest
         platforms: linux/amd64,linux/arm64
 
-  cleanup:
-    runs-on: ubuntu-latest
-    needs: build-and-push
-    permissions:
-      packages: write
-    steps:
-      - name: Delete untagged images
-        uses: actions/delete-package-versions@v5
-        with:
-          package-name: ${{github.event.repository.name}} 
-          package-type: 'container'
-          delete-only-untagged-versions: 'true'
-          min-versions-to-keep: 10
