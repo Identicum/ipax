@@ -279,6 +279,18 @@ function _M.check_multivalued_user_claim(claim_values, check_item)
 	return false
 end
 
+local function split(input, separator)
+	ngx.log(ngx.DEBUG, "Starting")
+	if separator == nil then
+		separator = "%s"
+	end
+	local t={}
+	for str in string.gmatch(input, "([^" .. separator .. "]+)") do
+		table.insert(t, str)
+	end
+	return t
+end
+
 function _M.get_ldap_object_names_from_dns(object_dns)
 	ngx.log(ngx.DEBUG, "Starting")
 	local object_names={}
