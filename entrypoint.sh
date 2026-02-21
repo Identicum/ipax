@@ -1,29 +1,24 @@
 #!/bin/bash
 
 get_demoapps_list() {
-    find "${DEMOAPPS_VARIABLES_CONFIG_PATH}" -name "*.conf" -type f
+  local demoapps_list=""
+  for demoapp_conf_file in ${DEMOAPPS_VARIABLES_CONFIG_PATH}/*.conf; do
+    demoapp_name=$(basename "$demoapp_conf_file" .conf)
+    demoapps_list+="$demoapp_name "
+  done
+  # Trim trailing space and print
+  echo "${demoapps_list%% }"
 }
 
 delete_lua_shared_dict() {
-    echo "Deleting existing ${LUA_SHARED_DICT_PATH}/**/*.conf"
-    find "${LUA_SHARED_DICT_PATH}" -name "*.conf" -type f -delete
+    echo "Deleting existing ${LUA_SHARED_DICT_PATH}/*.conf"
+    rm -f ${LUA_SHARED_DICT_PATH}/*.conf
 }
 
 create_lua_shared_dict_file() {
     local demoapp_name="$1"
-    local demoapp_conf_file="$2"
-    local relative_path="${demoapp_conf_file#${DEMOAPPS_VARIABLES_CONFIG_PATH}/}"
-    local subdir
-    subdir=$(dirname "$relative_path")
-    local lua_shared_dict_path
-    if [ "$subdir" = "." ]; then
-        lua_shared_dict_path="${LUA_SHARED_DICT_PATH}/${demoapp_name}.conf"
-    else
-        lua_shared_dict_path="${LUA_SHARED_DICT_PATH}/${subdir}/${demoapp_name}.conf"
-    fi
-
+    local lua_shared_dict_path="${LUA_SHARED_DICT_PATH}/${demoapp_name}.conf"
     echo "Creating ${lua_shared_dict_path}"
-    mkdir -p "$(dirname "$lua_shared_dict_path")"
     echo "lua_shared_dict ${demoapp_name}_jwks 1m;" > ${lua_shared_dict_path}
     echo "lua_shared_dict ${demoapp_name}_discovery 1m;" >> ${lua_shared_dict_path}
     echo "lua_shared_dict ${demoapp_name}_oidc_state 1m;" >> ${lua_shared_dict_path}
@@ -33,25 +28,16 @@ create_lua_shared_dict_file() {
 }
 
 delete_multi_configs() {
-    echo "Deleting existing ${DEMOAPPS_CONFIG_PATH}/**/*.conf"
-    find "${DEMOAPPS_CONFIG_PATH}" -name "*.conf" -type f -delete
+    echo "Deleting existing ${DEMOAPPS_CONFIG_PATH}/*.conf"
+    rm -f ${DEMOAPPS_CONFIG_PATH}/*.conf
 }
 
 create_multi_config_file() {
     local demoapp_name="$1"
-    local demoapp_conf_file="$2"
-    local relative_path="${demoapp_conf_file#${DEMOAPPS_VARIABLES_CONFIG_PATH}/}"
-    local subdir=$(dirname "$relative_path")
-    local demoapps_config_path
-    if [ "$subdir" = "." ]; then
-        demoapps_config_path="${DEMOAPPS_CONFIG_PATH}/${demoapp_name}.conf"
-    else
-        demoapps_config_path="${DEMOAPPS_CONFIG_PATH}/${subdir}/${demoapp_name}.conf"
-    fi
+    local demoapps_config_path="${DEMOAPPS_CONFIG_PATH}/${demoapp_name}.conf"
     echo "Creating ${demoapps_config_path}"
-    mkdir -p "$(dirname "$demoapps_config_path")"
     cat /var/ipax/conf/demoapp_template.conf > ${demoapps_config_path}
-    sed -i "s#include /var/ipax/conf/default_variables.conf;#include /var/ipax/conf/default_variables.conf;\n		include ${demoapp_conf_file};#g" "${demoapps_config_path}"
+    sed -i "s#include /var/ipax/conf/default_variables.conf;#include /var/ipax/conf/default_variables.conf;\n		include ${DEMOAPPS_VARIABLES_CONFIG_PATH}/${demoapp_name}.conf;#g" ${demoapps_config_path}
     sed -i "s#location /#location /${demoapp_name}/#g" ${demoapps_config_path}
     sed -i "s#root /var/ipax/html/#alias /var/ipax/html/#g" ${demoapps_config_path}
 }
@@ -78,12 +64,12 @@ if [ "$IPAX_MODE" = "demoapps" ]; then
     cp /var/ipax/conf/server/demoapps.conf /usr/local/openresty/nginx/conf/server.conf
     delete_lua_shared_dict
     delete_multi_configs
-    while IFS= read -r demoapp_conf_file; do
-        demoapp_name=$(basename "$demoapp_conf_file" .conf)
-        echo "Processing demoapp: '${demoapp_conf_file}'"
-        create_lua_shared_dict_file "${demoapp_name}" "${demoapp_conf_file}"
-        create_multi_config_file "${demoapp_name}" "${demoapp_conf_file}"
-    done < <(get_demoapps_list)
+    demoapps_list=$(get_demoapps_list)
+    for demoapp_name in $demoapps_list; do
+        echo "Processing demoapp: '${demoapp_name}'"
+        create_lua_shared_dict_file "${demoapp_name}"
+        create_multi_config_file "${demoapp_name}"
+    done
     echo "Finished processing demoapps"
 fi
 
