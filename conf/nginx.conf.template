@@ -52,7 +52,7 @@ http {
 
 	lua_package_path '/var/ipax/lua/?.lua;;';
 
-	include /var/ipax/conf/lua_shared_dict/*.conf;
+	include /var/ipax/lua_shared_dict/*.conf;
 
 	# bigger (chunked) cookie size to accomodate 'member_of' Claim
 	large_client_header_buffers 8 32k;

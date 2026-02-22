@@ -3,21 +3,22 @@ name: ipax-demoapps
 services:
   idp:
     container_name: idp
-    image: ghcr.io/identicum/keycloak:26.3
+    image: ghcr.io/identicum/keycloak:26.5
     restart: always
     pull_policy: always
     ports:
-      - 8080:8080
+      - 127.0.0.1:8080:8080
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-      KC_FEATURES: update-email
     volumes:
       - ./keycloak/:/opt/keycloak/data/import/
     command: "start-dev --import-realm"
+
   demoapps:
     container_name: demoapps
     image: ghcr.io/identicum/ipax:latest
+    # pull_policy: always
     restart: always
     ports:
       - 80:80
@@ -26,15 +27,18 @@ services:
       NGINX_LOG_LEVEL: debug
       IPAX_MODE: demoapps
     volumes:
-      - ../../entrypoint.sh:/entrypoint.sh
-      - ../../conf/:/var/ipax/conf/
-      - ./conf/:/var/ipax/conf/demoapps/
-      - ../../html/:/var/ipax/html/
-      - ../../lua/:/var/ipax/lua/
-      - ../../templates:/var/ipax/templates/
+      - ../../entrypoint.sh:/entrypoint.sh:ro
+      - ../../conf/:/var/ipax/conf/:ro
+      - ../../html/:/var/ipax/html/:ro
+      - ../../lua/:/var/ipax/lua/:ro
+      - ../../templates:/var/ipax/templates/:ro
+      - ./conf/:/var/ipax/demoapps/:ro
+      # - ./work/lua_shared_dict/:/var/ipax/lua_shared_dict/:rw
+      # - ./work/location_conf.d/:/var/ipax/location_conf.d/:rw
     depends_on:
       idp:
         condition: service_healthy
+
   mailcatcher:
     container_name: mailcatcher
     image: ghcr.io/identicum/mailcatcher:latest

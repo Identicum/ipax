@@ -11,6 +11,10 @@ COPY lua /var/ipax/lua/
 COPY html /var/ipax/html
 COPY templates /var/ipax/templates
 
+RUN mkdir -p /var/ipax/lua_shared_dict && \
+    mkdir -p /var/ipax/location_conf.d && \
+    mkdir -p /var/ipax/proxy_conf.d
+
 ENV NGINX_LOG_LEVEL=warn \
     NGINX_RESOLVER=8.8.8.8 \
     OIDC_DISCOVERY="" \
@@ -43,10 +47,7 @@ ENV NGINX_LOG_LEVEL=warn \
     KC_ENROL_BIOMETRICS_ACTION="" \
     KC_ENROL_BIOMETRICS_LABEL="Enrol biometrics" \
     KC_ADD_PASSKEY_ACTION="" \
-    KC_ADD_PASSKEY_LABEL="Add Passkey" \
-    LUA_SHARED_DICT_PATH="/var/ipax/conf/lua_shared_dict" \
-    DEMOAPPS_VARIABLES_CONFIG_PATH="/var/ipax/conf/demoapps" \
-    DEMOAPPS_CONFIG_PATH="/var/ipax/conf/location_conf.d"
+    KC_ADD_PASSKEY_LABEL="Add Passkey"
 
 WORKDIR /usr/local/openresty/nginx
 

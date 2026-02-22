@@ -2,7 +2,7 @@
 
 get_demoapps_list() {
   local demoapps_list=""
-  for demoapp_conf_file in ${DEMOAPPS_VARIABLES_CONFIG_PATH}/*.conf; do
+  for demoapp_conf_file in /var/ipax/demoapps/*.conf; do
     demoapp_name=$(basename "$demoapp_conf_file" .conf)
     demoapps_list+="$demoapp_name "
   done
@@ -11,13 +11,13 @@ get_demoapps_list() {
 }
 
 delete_lua_shared_dict() {
-    echo "Deleting existing ${LUA_SHARED_DICT_PATH}/*.conf"
-    rm -f ${LUA_SHARED_DICT_PATH}/*.conf
+    echo "Deleting existing /var/ipax/lua_shared_dict/*.conf"
+    rm -f /var/ipax/lua_shared_dict/*.conf
 }
 
 create_lua_shared_dict_file() {
     local demoapp_name="$1"
-    local lua_shared_dict_path="${LUA_SHARED_DICT_PATH}/${demoapp_name}.conf"
+    local lua_shared_dict_path="/var/ipax/lua_shared_dict/${demoapp_name}.conf"
     echo "Creating ${lua_shared_dict_path}"
     echo "lua_shared_dict ${demoapp_name}_jwks 1m;" > ${lua_shared_dict_path}
     echo "lua_shared_dict ${demoapp_name}_discovery 1m;" >> ${lua_shared_dict_path}
@@ -28,16 +28,16 @@ create_lua_shared_dict_file() {
 }
 
 delete_multi_configs() {
-    echo "Deleting existing ${DEMOAPPS_CONFIG_PATH}/*.conf"
-    rm -f ${DEMOAPPS_CONFIG_PATH}/*.conf
+    echo "Deleting existing /var/ipax/location_conf.d/*.conf"
+    rm -f /var/ipax/location_conf.d/*.conf
 }
 
 create_multi_config_file() {
     local demoapp_name="$1"
-    local demoapps_config_path="${DEMOAPPS_CONFIG_PATH}/${demoapp_name}.conf"
+    local demoapps_config_path="/var/ipax/location_conf.d/${demoapp_name}.conf"
     echo "Creating ${demoapps_config_path}"
     cat /var/ipax/conf/demoapp_template.conf > ${demoapps_config_path}
-    sed -i "s#include /var/ipax/conf/default_variables.conf;#include /var/ipax/conf/default_variables.conf;\n		include ${DEMOAPPS_VARIABLES_CONFIG_PATH}/${demoapp_name}.conf;#g" ${demoapps_config_path}
+    sed -i "s#include /var/ipax/conf/default_variables.conf;#include /var/ipax/conf/default_variables.conf;\n		include /var/ipax/demoapps/${demoapp_name}.conf;#g" ${demoapps_config_path}
     sed -i "s#location /#location /${demoapp_name}/#g" ${demoapps_config_path}
     sed -i "s#root /var/ipax/html/#alias /var/ipax/html/#g" ${demoapps_config_path}
 }
