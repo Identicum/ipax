@@ -58,7 +58,6 @@ services:
       - ../../lua/:/var/ipax/lua/:ro
       - ../../templates:/var/ipax/templates/:ro
       - ./conf/:/var/ipax/proxy_conf.d/:ro
-      - ./ssl_conf/:/var/ipax/ssl_conf/:ro
       - ./certs/:/var/ipax/certs/:ro
     depends_on:
       idp:
