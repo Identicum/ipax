@@ -12,6 +12,8 @@
 | /var/ipax/lua_shared_dict/                  | Execution of /entrypoint.sh     | LUA shared dictionaries                                    |
 |---------------------------------------------|---------------------------------|------------------------------------------------------------|
 | /var/ipax/proxy_conf.d/                     | Locally mounted                 | nginx .conf files ("proxy" mode)                           |
+| /var/ipax/ssl_conf/                         | Locally mounted                 | ssl settings re-used in .conf files                        |
+| /var/ipax/certs/                            | Locally mounted                 | certificate files                                          |
 |---------------------------------------------|---------------------------------|------------------------------------------------------------|
 | /var/ipax/demoapps/                         | Locally mounted                 | .conf files with variables ("demoapps" mode)               |
 | /var/ipax/location_conf.d/                  | Execution of /entrypoint.sh     | nginx .conf files ("demoapps" mode)                        |

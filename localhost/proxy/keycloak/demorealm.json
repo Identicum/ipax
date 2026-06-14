@@ -1,0 +1,50 @@
+{
+    "realm": "demorealm",
+    "enabled": true,
+    "registrationAllowed" : true,
+    "registrationEmailAsUsername" : false,
+    "verifyEmail" : true,
+    "editUsernameAllowed": true,
+    "loginWithEmailAllowed" : true,
+    "duplicateEmailsAllowed" : false,
+    "resetPasswordAllowed" : true,
+    "clients" : [ 
+        {
+            "name": "ipax",
+            "clientId": "ipax_client_id",
+            "secret": "ipax_client_secret",
+            "standardFlowEnabled": true,
+            "implicitFlowEnabled": false,
+            "directAccessGrantsEnabled": false,
+            "serviceAccountsEnabled": false,
+            "frontchannelLogout": true,
+            "rootUrl": "http://localhost",
+            "baseUrl": "/",
+            "redirectUris": [
+                "http://demoapp1/private/redirect_uri",
+                "http://demoapp2/private/redirect_uri",
+                "http://demoapp3/private/redirect_uri"
+            ],
+            "defaultClientScopes": [ ],
+            "optionalClientScopes": [ "profile", "email" ],
+            "attributes": {
+                "post.logout.redirect.uris": "/logoutSuccess.html"
+            }
+        }
+    ],
+    "users" : [
+        {
+            "username": "demo",
+            "enabled" : true,
+            "createdTimestamp" : 1672531200000,
+            "email": "demo@identicum.com",
+            "emailVerified" : true,
+            "firstName": "Demo",
+            "lastName": "User",
+            "credentials" : [ {"type": "password", "value": "demo"} ],
+            "clientRoles": {
+                "account": ["delete-account", "view-profile", "manage-account"]
+            }
+        }
+    ]
+}

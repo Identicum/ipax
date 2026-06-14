@@ -1,0 +1,65 @@
+name: ipax-proxy
+
+services:
+  idp:
+    container_name: idp
+    image: ghcr.io/identicum/keycloak:26.6
+    restart: always
+    pull_policy: always
+    ports:
+      - 127.0.0.1:8080:8080
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    volumes:
+      - ./keycloak/:/opt/keycloak/data/import/
+    command: "start-dev --import-realm"
+
+  app1:
+    container_name: app1
+    image: nginx:alpine
+    restart: always
+    volumes:
+      - ./app1/:/usr/share/nginx/html/:ro
+
+  app2:
+    container_name: app2
+    image: nginx:alpine
+    restart: always
+    volumes:
+      - ./app2/:/usr/share/nginx/html/:ro
+
+  app3:
+    container_name: app3
+    image: nginx:alpine
+    restart: always
+    volumes:
+      - ./app3/:/usr/share/nginx/html/:ro
+
+  proxy:
+    container_name: proxy
+    image: ghcr.io/identicum/ipax:latest
+    # pull_policy: always
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      NGINX_RESOLVER: 127.0.0.11 valid=5s
+      NGINX_LOG_LEVEL: debug
+      IPAX_MODE: proxy
+      OIDC_DISCOVERY: http://idp:8080/realms/demorealm/.well-known/openid-configuration
+      OIDC_CLIENT_ID: ipax_client_id
+      OIDC_CLIENT_SECRET: ipax_client_secret
+      OIDC_SCOPE: openid profile email
+    volumes:
+      - ../../entrypoint.sh:/entrypoint.sh:ro
+      - ../../conf/:/var/ipax/conf/:ro
+      - ../../html/:/var/ipax/html/:ro
+      - ../../lua/:/var/ipax/lua/:ro
+      - ../../templates:/var/ipax/templates/:ro
+      - ./conf/:/var/ipax/proxy_conf.d/:ro
+      - ./ssl_conf/:/var/ipax/ssl_conf/:ro
+      - ./certs/:/var/ipax/certs/:ro
+    depends_on:
+      idp:
+        condition: service_healthy
