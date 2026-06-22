@@ -48,7 +48,7 @@ http {
 
 	# proxy buffers to allow big headers to/from origin webservers
 	proxy_buffers 8 32k;
-	proxy_buffer_size 32k;
+	proxy_buffer_size 128k;
 
 	lua_package_path '/var/ipax/lua/?.lua;;';
 
