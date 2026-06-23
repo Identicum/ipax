@@ -15,6 +15,7 @@
 | OIDC_POST_LOGOUT_REDIRECT_URI | oidc_post_logout_redirect_uri | oidc_opts.post_logout_redirect_uri |                               |
 | OIDC_PROMPT                   | oidc_prompt                   | oidc_opts.prompt                   |                               |
 | OIDC_ACR_VALUES               | oidc_acr_values               | oidc_opts.authorization_params     |                               |
+| QUERY_PARAMS                  | query_params                  | oidc_opts.authorization_params     | Extra params (k1=v1&k2=v2) added to the IdP login redirect |
 | SESSION_COOKIE_SAME_SITE      | session_cookie_same_site      | session_opts.cookie_same_site      | Lax / Strict / None / Default |
 | SESSION_COOKIE_SECURE         | session_cookie_secure         | session_opts.cookie_secure         |                               |
 | SESSION_IDLING_TIMEOUT        | session_idling_timeout        | session_opts.idling_timeout        |                               |

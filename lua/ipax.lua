@@ -69,6 +69,13 @@ function _M.get_oidc_opts()
 		refresh_tokens_lua_shared_dict = _M.get_var_or_env("ipax_app_name") .. "_oidc_refresh_tokens",
 		id_tokens_lua_shared_dict = _M.get_var_or_env("ipax_app_name") .. "_oidc_id_tokens"
 	}
+	local query_params_str = _M.get_var_or_env("query_params")
+	if query_params_str and query_params_str ~= '' then
+		local query_params = ngx.decode_args(query_params_str)
+		for k, v in pairs(query_params) do
+			oidc_opts["authorization_params"][k] = v
+		end
+	end
 	local oidc_client_secret = _M.get_var_or_env("oidc_client_secret")
 	if oidc_client_secret ~= '' then
 		oidc_opts["client_secret"]=oidc_client_secret
