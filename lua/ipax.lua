@@ -173,7 +173,6 @@ local function get_kc_user_action_url(ipax_base_url, client_id, kc_action, autho
 	local params = {
 		client_id = client_id,
 		response_type = "code",
-		scope = "openid",
 		redirect_uri = redirect_uri,
 		kc_action = kc_action
 	}
