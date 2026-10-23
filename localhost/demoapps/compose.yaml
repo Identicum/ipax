@@ -3,7 +3,7 @@ name: ipax-demoapps
 services:
   idp:
     container_name: idp
-    image: ghcr.io/identicum/keycloak:26.5
+    image: ghcr.io/identicum/keycloak:26.8
     restart: always
     pull_policy: always
     ports:

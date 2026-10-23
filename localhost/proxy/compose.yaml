@@ -3,7 +3,7 @@ name: ipax-proxy
 services:
   idp:
     container_name: idp
-    image: ghcr.io/identicum/keycloak:26.6
+    image: ghcr.io/identicum/keycloak:26.8
     restart: always
     pull_policy: always
     ports:
