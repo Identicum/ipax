@@ -1,9 +1,9 @@
-FROM openresty/openresty:1.25.3.2-alpine-fat
+FROM openresty/openresty:1.31.1.1-alpine-fat
 
-RUN luarocks install lua-resty-http 0.17.2
-RUN luarocks install lua-resty-session 4.0.5
-RUN luarocks install lua-resty-jwt 0.2.3
-RUN luarocks install lua-resty-openidc 1.8.0
+RUN luarocks install lua-resty-http 0.18.0
+RUN luarocks install lua-resty-session 4.2.0
+RUN luarocks install lua-resty-jwt 0.4.0
+RUN luarocks install lua-resty-openidc 1.9.2
 RUN luarocks install lua-resty-template 2.0
 
 COPY conf /var/ipax/conf/
