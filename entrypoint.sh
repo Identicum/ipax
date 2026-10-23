@@ -3,6 +3,8 @@
 get_demoapps_list() {
   local demoapps_list=""
   for demoapp_conf_file in /var/ipax/demoapps/*.conf; do
+    # no .conf files: the glob is not expanded
+    [ -e "$demoapp_conf_file" ] || continue
     demoapp_name=$(basename "$demoapp_conf_file" .conf)
     demoapps_list+="$demoapp_name "
   done
@@ -40,6 +42,30 @@ create_multi_config_file() {
     sed -i "s#include /var/ipax/conf/default_variables.conf;#include /var/ipax/conf/default_variables.conf;\n		include /var/ipax/demoapps/${demoapp_name}.conf;#g" ${demoapps_config_path}
     sed -i "s#location /#location /${demoapp_name}/#g" ${demoapps_config_path}
     sed -i "s#root /var/ipax/html/#alias /var/ipax/html/#g" ${demoapps_config_path}
+    # "/demoapp1" (without trailing slash) doesn't match "location /demoapp1/"
+    echo "	location = /${demoapp_name} { return 301 /${demoapp_name}/; }" >> ${demoapps_config_path}
+}
+
+get_demoapp_display_name() {
+    local demoapp_name="$1"
+    local quote="['\"]"
+    local display_name=$(sed -nE "s/^[[:space:]]*set[[:space:]]+\\\$ipax_display_name[[:space:]]+${quote}([^'\"]*)${quote}.*/\\1/p" "/var/ipax/demoapps/${demoapp_name}.conf" | head -1)
+    echo "${display_name:-$demoapp_name}"
+}
+
+json_escape() {
+    echo "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
+}
+
+create_demoapps_index_file() {
+    local demoapps_index_path="/var/ipax/demoapps.json"
+    echo "Creating ${demoapps_index_path}"
+    local json=""
+    for demoapp_name in "$@"; do
+        local display_name=$(json_escape "$(get_demoapp_display_name "${demoapp_name}")")
+        json+="{\"name\":\"$(json_escape "${demoapp_name}")\",\"display_name\":\"${display_name}\"},"
+    done
+    echo "[${json%,}]" > ${demoapps_index_path}
 }
 
 NGINX_CONF_TEMPLATE="/var/ipax/conf/nginx.conf.template"
@@ -70,6 +96,7 @@ if [ "$IPAX_MODE" = "demoapps" ]; then
         create_lua_shared_dict_file "${demoapp_name}"
         create_multi_config_file "${demoapp_name}"
     done
+    create_demoapps_index_file $demoapps_list
     echo "Finished processing demoapps"
 fi
 

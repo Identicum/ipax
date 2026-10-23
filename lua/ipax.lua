@@ -102,6 +102,43 @@ function _M.get_session_opts()
 	return session_opts
 end
 
+local function escape_pattern(input)
+	return (string.gsub(input, "%p", "%%%0"))
+end
+
+-- Remove the IPAx session cookies from the request, so they are not sent to the upstream app (prevents HTTP error 413).
+-- lua-resty-session names the chunks of a large cookie "<cookie_name>2", "<cookie_name>3", ...
+function _M.filter_session_cookies(session_opts)
+	ngx.log(ngx.DEBUG, "Starting")
+	local cookie_header = ngx.var.http_cookie
+	if not cookie_header then
+		return
+	end
+	local session_cookie_patterns = {
+		"^" .. escape_pattern(session_opts.cookie_name) .. "%d*$",
+		"^" .. escape_pattern(session_opts.remember_cookie_name) .. "%d*$"
+	}
+	local kept_cookies = {}
+	for cookie in string.gmatch(cookie_header, "[^;]+") do
+		cookie = string.gsub(cookie, "^%s+", "")
+		local cookie_name = string.match(cookie, "^([^=]+)=") or cookie
+		local is_session_cookie = false
+		for _, pattern in ipairs(session_cookie_patterns) do
+			if string.match(cookie_name, pattern) then
+				is_session_cookie = true
+			end
+		end
+		if not is_session_cookie and cookie ~= "" then
+			table.insert(kept_cookies, cookie)
+		end
+	end
+	if #kept_cookies > 0 then
+		ngx.req.set_header("Cookie", table.concat(kept_cookies, "; "))
+	else
+		ngx.req.clear_header("Cookie")
+	end
+end
+
 function _M.get_id_token(res)
 	ngx.log(ngx.DEBUG, "Starting")
 	return res.id_token
@@ -135,8 +172,8 @@ local function get_preferred_name_from_userinfo(res)
 	ngx.log(ngx.DEBUG, "Starting")
     local userinfo_json = _M.get_userinfo_json(res)
     local userinfo_table = require("json").decode(userinfo_json)
-    local preferred_username = userinfo_table.preferred_username or "nil"
-    ngx.log(ngx.DEBUG, "returning preferred_username: " .. preferred_username)
+    local preferred_username = userinfo_table and userinfo_table.preferred_username or nil
+    ngx.log(ngx.DEBUG, "returning preferred_username: " .. tostring(preferred_username))
     return preferred_username
 end
 
@@ -144,8 +181,8 @@ local function get_preferred_username_from_userinfo_or_idtoken(res)
 	ngx.log(ngx.DEBUG, "Starting")
     local userinfo_preferred_username = get_preferred_name_from_userinfo(res)
 	if userinfo_preferred_username == nil then
-		local id_token = _M.get_id_token() 
-    	return id_token.preferred_username
+		local id_token = _M.get_id_token(res)
+    	return id_token and id_token.preferred_username or nil
     else
 		return userinfo_preferred_username
     end
@@ -189,9 +226,8 @@ end
 local function get_discovery_document(oidc_opts)
 	ngx.log(ngx.DEBUG, "Starting for discovery: " .. oidc_opts.discovery)
 	local http = require("resty.http")
-	local http = require("resty.http")
 	local httpc = http.new()
-	local res, err = httpc:request_uri(oidc_opts.discovery, { method = "GET", oidc_opts.ssl_verify })
+	local res, err = httpc:request_uri(oidc_opts.discovery, { method = "GET", ssl_verify = (oidc_opts.ssl_verify ~= "no") })
 	if not res then
 		ngx.log(ngx.ERR, "failed to request discovery document: ", err)
 		return nil
@@ -207,6 +243,10 @@ local function get_user_actions(oidc_opts, ipax_base_url)
 	ngx.log(ngx.DEBUG, "Starting for client_id: " .. oidc_opts.client_id)
 	local userActionsTable = {}
 	local discovery_document = get_discovery_document(oidc_opts)
+	if not discovery_document then
+		ngx.log(ngx.WARN, "Discovery document not available, user actions not shown")
+		return userActionsTable
+	end
 	local authorization_endpoint = discovery_document.authorization_endpoint
 	local client_id = oidc_opts.client_id
 

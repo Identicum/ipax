@@ -57,15 +57,14 @@ server {
 			local oidc_opts = ipax.get_oidc_opts()
 			local session_opts = ipax.get_session_opts()
 			ngx.ctx.res = ipax.get_res(oidc_opts, session_opts);
+			-- don't send the IPAx session cookies to the app (avoids HTTP 413 on large cookies)
+			ipax.filter_session_cookies(session_opts)
 			local user = ipax.get_user(ngx.ctx.res)
 		}
 		proxy_pass http://app1:80/;
 		proxy_set_header Host $host;
 		proxy_set_header X-Forwarded-Proto $scheme;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-
-		# don't forward the IPAx session cookies to the app (avoids HTTP 413 on large cookies)
-		proxy_set_header Cookie $filtered_cookie;
 	}
 }
 ```
@@ -76,6 +75,7 @@ Inside `access_by_lua_block` you can use these helpers from [lua/ipax.lua](lua/i
 |------------------------------------------------------------|-------------------------------------------------------------------|
 | `get_oidc_opts()` / `get_session_opts()`                   | Build the lua-resty-openidc / lua-resty-session options           |
 | `get_res(oidc_opts, session_opts)`                         | Authenticate the user (redirects to the IdP if there's no session)|
+| `filter_session_cookies(session_opts)`                     | Remove the IPAx session cookies from the request sent to the app  |
 | `get_user(res)`                                            | Userinfo claims, as a Lua table                                   |
 | `get_id_token(res)` / `get_access_token(res)`              | Tokens, for example to send a `Bearer` token to an API            |
 | `check_multivalued_user_claim(values, required)`           | Returns HTTP 403 if `required` is not in the claim `values`       |
@@ -141,7 +141,7 @@ set $oidc_client_secret 'demoapp1_client_secret';
 set $kc_update_password_action 'UPDATE_PASSWORD';
 ```
 
-For each file, the entrypoint creates the same pages as the single demo app, under `/<file name>/`. Keep these rules:
+For each file, the entrypoint creates the same pages as the single demo app, under `/<file name>/`. The root URL (`/`) lists all the configured apps, using their `$ipax_display_name`. Keep these rules:
 
 - `$ipax_app_name` must be the same as the file name (without `.conf`). IPAx uses it to find the app's Lua shared dictionaries, and to build the logout path.
 - `$ipax_base_url` must include the app's path (`http://demoapps/demoapp1`).
@@ -169,7 +169,7 @@ Each folder under [localhost/](localhost/) has a `compose.yaml` that starts IPAx
    | Example              | URL                                                             |
    |----------------------|-----------------------------------------------------------------|
    | `localhost/single`   | http://demoapp1                                                 |
-   | `localhost/demoapps` | http://demoapps/demoapp1/, http://demoapps/demoapp2/, http://demoapps/demoapp3/ |
+   | `localhost/demoapps` | http://demoapps (index of the apps), http://demoapps/demoapp1/, http://demoapps/demoapp2/, http://demoapps/demoapp3/ |
    | `localhost/proxy`    | http://demoapp1, http://demoapp2, http://demoapp3               |
 
 Other services in the examples:
