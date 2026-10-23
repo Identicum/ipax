@@ -172,6 +172,8 @@ Each folder under [localhost/](localhost/) has a `compose.yaml` that starts IPAx
    | `localhost/demoapps` | http://demoapps (index of the apps), http://demoapps/demoapp1/, http://demoapps/demoapp2/, http://demoapps/demoapp3/ |
    | `localhost/proxy`    | http://demoapp1, http://demoapp2, http://demoapp3               |
 
+   In the `proxy` example, `demoapp1` is a static nginx page. `demoapp2` and `demoapp3` run [wam-test-page](https://github.com/identicum/wam-test-page), which shows the HTTP headers the app receives. `demoapp2` filters the IPAx session cookies with `filter_session_cookies()`. `demoapp3` doesn't, so it receives the `Cookie` header unchanged.
+
 Other services in the examples:
 
 - Keycloak admin console: http://localhost:8080 (`admin` / `admin`).

@@ -24,17 +24,17 @@ services:
 
   app2:
     container_name: app2
-    image: nginx:alpine
+    hostname: app2
+    image: ghcr.io/identicum/wam-test-page:latest
     restart: always
-    volumes:
-      - ./app2/:/usr/share/nginx/html/:ro
+    pull_policy: always
 
   app3:
     container_name: app3
-    image: nginx:alpine
+    hostname: app3
+    image: ghcr.io/identicum/wam-test-page:latest
     restart: always
-    volumes:
-      - ./app3/:/usr/share/nginx/html/:ro
+    pull_policy: always
 
   proxy:
     container_name: proxy
