@@ -86,6 +86,12 @@ if [ "$IPAX_MODE" = "single" ]; then
     create_lua_shared_dict_file "${IPAX_APP_NAME}"
 fi
 
+if [ "$IPAX_MODE" = "spa" ]; then
+    cp /var/ipax/conf/server/spa.conf /usr/local/openresty/nginx/conf/server.conf
+    delete_lua_shared_dict
+    create_lua_shared_dict_file "${IPAX_APP_NAME}"
+fi
+
 if [ "$IPAX_MODE" = "demoapps" ]; then
     cp /var/ipax/conf/server/demoapps.conf /usr/local/openresty/nginx/conf/server.conf
     delete_lua_shared_dict

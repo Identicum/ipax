@@ -15,11 +15,11 @@ Defaults come from the [Dockerfile](Dockerfile).
 
 | Environment       | nginx variable    | Default            | Example                      | Description                                                                                                                                                      |
 |-------------------|-------------------|--------------------|------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| IPAX_MODE         |                   | `proxy`            | `single`                     | Execution mode: `proxy`, `single` or `demoapps`. See [README.md](README.md#execution-modes)                                                                       |
+| IPAX_MODE         |                   | `proxy`            | `single`                     | Execution mode: `proxy`, `single`, `spa` or `demoapps`. See [README.md](README.md#execution-modes)                                                                       |
 | IPAX_APP_NAME     | ipax_app_name     | `ipax`             | `demoapp1`                   | Internal app name. It prefixes the session cookies (`<name>_session`, `<name>_remember`) and the Lua shared dictionaries. In `demoapps` mode it must match the `.conf` file name |
 | IPAX_DISPLAY_NAME | ipax_display_name | `IPAx`             | `DemoApp1`                   | App name shown on the landing and info pages                                                                                                                     |
 | IPAX_BASE_URL     | ipax_base_url     | `http://localhost` | `https://demoapp1.example.com` | External URL of the app, without a trailing slash. Prefix for `OIDC_REDIRECT_URI` and `OIDC_POST_LOGOUT_REDIRECT_URI`. In `demoapps` mode, include the app path (`http://demoapps/demoapp1`) |
-| API_BASE_URL      | api_base_url      |                    | `http://api.internal:8080`   | Upstream API (scheme, host and port, no path) that receives `/api/` requests with the user's access token as a `Bearer` token. Used by [conf/samples/spa_api.conf](conf/samples/spa_api.conf)   |
+| API_BASE_URL      | api_base_url      |                    | `http://api.internal:8080`   | Upstream API (scheme, host and port, no path) that receives `/api/` requests with the user's access token as a `Bearer` token. Used in `spa` mode   |
 
 ## OIDC (lua-resty-openidc)
 

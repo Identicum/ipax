@@ -33,6 +33,7 @@ See [FILESYSTEM.md](FILESYSTEM.md) for the container's file layout and what to m
 |------------|-------------|------------------------------------------------------------|--------------------------|
 | Proxy      | `proxy`     | Protects one or more upstream apps (reverse proxy)         | `/var/ipax/proxy_conf.d/`|
 | Single     | `single`    | Runs one demo app, configured only with env variables      | (none)                   |
+| SPA        | `spa`       | Serves a Single Page App and forwards `/api/` to an API    | `/var/ipax/html/`        |
 | Multi      | `demoapps`  | Runs several demo apps on one host, one per URL path       | `/var/ipax/demoapps/`    |
 
 At startup, [entrypoint.sh](entrypoint.sh) generates `nginx.conf` from [conf/nginx.conf.template](conf/nginx.conf.template), copies the server config for the selected mode from [conf/server/](conf/server/), creates the Lua shared dictionaries each app needs, and starts OpenResty.
@@ -74,7 +75,7 @@ Inside `access_by_lua_block` you can use these helpers from [lua/ipax.lua](lua/i
 | Function                                                   | Use                                                               |
 |------------------------------------------------------------|-------------------------------------------------------------------|
 | `get_oidc_opts()` / `get_session_opts()`                   | Build the lua-resty-openidc / lua-resty-session options           |
-| `get_res(oidc_opts, session_opts)`                         | Authenticate the user (redirects to the IdP if there's no session)|
+| `get_res(oidc_opts, session_opts[, "deny"])`               | Authenticate the user (redirects to the IdP if there's no session, or returns HTTP 401 with `"deny"`)|
 | `filter_session_cookies(session_opts)`                     | Remove the IPAx session cookies from the request sent to the app  |
 | `get_user(res)`                                            | Userinfo claims, as a Lua table                                   |
 | `get_id_token(res)` / `get_access_token(res)`              | Tokens, for example to send a `Bearer` token to an API            |
@@ -89,7 +90,7 @@ ngx.req.set_header("IPAx-USERNAME", user.preferred_username)
 ngx.req.set_header("IPAx-EMAIL", user.email)
 ```
 
-[conf/samples/](conf/samples/) has more examples: authorization by group, header injection, an SPA calling an API with the access token, and an HTTP to HTTPS redirect.
+[conf/samples/](conf/samples/) has more examples: authorization by group, header injection and an HTTP to HTTPS redirect.
 
 For HTTPS, mount your certificate and key as `/var/ipax/certs/public.pem` and `/var/ipax/certs/private.pem`, and add `include /var/ipax/conf/ssl/default.settings;` to your `server` block.
 
@@ -121,6 +122,33 @@ The app has these pages:
 - `/` and `/landing`: public landing page with a **Login** button.
 - `/private/info`: protected page. It shows the user's tokens, userinfo claims and request headers, the configured Keycloak action buttons, and a **Logout** button.
 - `/private/logout`: ends the session and logs out at the IdP (RP-initiated logout), then redirects to `/logoutSuccess.html`.
+
+### Single Page App (`spa`)
+
+Like `single`, but for your own Single Page App (SPA). Mount the SPA's files in `/var/ipax/html/`, and set `API_BASE_URL` to the API the SPA calls. It needs no config files.
+
+```yaml
+services:
+  ipax:
+    image: ghcr.io/identicum/ipax:latest
+    ports:
+      - 80:80
+    environment:
+      IPAX_MODE: spa
+      IPAX_BASE_URL: http://spa
+      API_BASE_URL: http://api.internal:8080
+      OIDC_DISCOVERY: http://idp:8080/realms/demorealm/.well-known/openid-configuration
+      OIDC_CLIENT_ID: ipax_client_id
+      OIDC_CLIENT_SECRET: ipax_client_secret
+    volumes:
+      - ./dist/:/var/ipax/html/
+```
+
+The generated server config ([conf/server/spa.conf](conf/server/spa.conf)) has:
+
+- `/`: the SPA's static files, from `/var/ipax/html/`. Every path is protected: users without a session are sent to the IdP. The redirect URI (`/private/redirect_uri`) and logout path (`/private/logout`) are handled here too.
+- `/logoutSuccess.html`: public, so the IdP can send the user there after logout.
+- `/api/`: forwarded to `API_BASE_URL` with the same URI (`/api/orders` goes to `http://api.internal:8080/api/orders`). IPAx removes its session cookies from the `Cookie` header (avoids HTTP 413 at the API) and adds `Authorization: Bearer <access token>`. Requests without a session get HTTP 401, not a redirect to the IdP.
 
 ### Multi demo apps (`demoapps`)
 

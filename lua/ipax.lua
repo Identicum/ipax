@@ -188,7 +188,8 @@ local function get_preferred_username_from_userinfo_or_idtoken(res)
     end
 end
 
-function _M.get_res(oidc_opts, session_opts)
+-- unauth_action: nil to redirect to the IdP when there's no session, "deny" to return HTTP 401 (for APIs)
+function _M.get_res(oidc_opts, session_opts, unauth_action)
 	ngx.log(ngx.DEBUG, "Starting for client_id: " .. oidc_opts.client_id)
 	-- for k, v in pairs(oidc_opts) do
 	-- 	ngx.log(ngx.DEBUG, "Using oidc_opts[" .. k .. "] = " .. tostring(v))
@@ -196,9 +197,12 @@ function _M.get_res(oidc_opts, session_opts)
 	-- for k, v in pairs(session_opts) do
 	-- 	ngx.log(ngx.DEBUG, "Using session_opts[" .. k .. "] = " .. tostring(v))
 	-- end
-	local res, err, target, session = require("resty.openidc").authenticate(oidc_opts, nil, nil, session_opts)
+	local res, err, target, session = require("resty.openidc").authenticate(oidc_opts, nil, unauth_action, session_opts)
 	if err then
-		if string.find(err, "error=login_required") then
+		if unauth_action == "deny" then
+			ngx.log(ngx.INFO, "Request without a valid session: ", err)
+			ngx.exit(ngx.HTTP_UNAUTHORIZED)
+		elseif string.find(err, "error=login_required") then
 			ngx.redirect("../loginRequired.html", ngx.HTTP_MOVED_TEMPORARILY)
 		else
 			ngx.log(ngx.ERR, "Authentication failed: ", err)

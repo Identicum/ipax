@@ -3,7 +3,7 @@
 |---------------------------------------------|---------------------------------|------------------------------------------------------------|
 | /entrypoint.sh                              | {repo}/entrypoint.sh            | IPAX initialization script                                 |
 | /var/ipax/conf/                             | {repo}/conf/                    | IPAX image configuration files                             |
-| /var/ipax/html/                             | {repo}/html/                    | IPAX image HTML content                                    |
+| /var/ipax/html/                             | {repo}/html/ or mounted         | IPAX image HTML content, or the SPA files ("spa" mode)     |
 | /var/ipax/lua/                              | {repo}/lua/                     | IPAX image LUA scripts                                     |
 | /var/ipax/templates/                        | {repo}/templates/               | IPAX image HTML templates                                  |
 | /var/ipax/conf/ssl/                         | {repo}/conf/ssl/ or mounted     | SSL settings (if used in "proxy" mode)                     |
