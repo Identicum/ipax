@@ -311,6 +311,13 @@ end
 
 function _M.is_value_in_list(value_list, check_item)
 	ngx.log(ngx.DEBUG, "Starting")
+	if value_list == nil then
+		return false
+	end
+	if type(value_list) ~= "table" then
+		-- single-valued claim (e.g. a string)
+		return value_list == check_item
+	end
 	for index, value in pairs(value_list) do
 		if value == check_item then
 			return true
@@ -324,7 +331,7 @@ function _M.check_multivalued_user_claim(claim_values, check_item)
 	if _M.is_value_in_list(claim_values, check_item) then
 		return true
 	end
-	ngx.log(ngx.WARN, "Access denied. User claim does not contain required value: " .. check_item)
+	ngx.log(ngx.WARN, "Access denied. User claim does not contain required value: " .. tostring(check_item))
 	ngx.exit(ngx.HTTP_FORBIDDEN)
 	return false
 end
